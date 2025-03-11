@@ -17,7 +17,7 @@ export default function Layout({ children }: LayoutProps): ReactElement | null {
   if (!mounted) return null
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col min-h-screen text-gray-900 dark:text-gray-100 transition-colors duration-200">
       <TopBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       
       <div className="flex flex-1">

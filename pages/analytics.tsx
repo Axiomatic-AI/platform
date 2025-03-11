@@ -6,7 +6,7 @@ const Analytics: NextPage = () => {
     <div>
       <Head>
         <title>Analytics - Platform</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" />
       </Head>
 
       <div className="py-6">

@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react'
 import { useTheme } from 'next-themes'
+import LogoWithText from './LogoWithText';
 
 interface TopBarProps {
   sidebarOpen: boolean;
@@ -10,8 +11,8 @@ export default function TopBar({ sidebarOpen, setSidebarOpen }: TopBarProps): Re
   const { theme, setTheme } = useTheme()
 
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-sm z-10">
-      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="w-full transition-all duration-200 border-b border-transparent bg-white dark:bg-dark-900 dark:border-gray-700/0">
+      <div className="max-w-full mx-auto px-4">
         <div className="flex justify-between h-16">
           <div className="flex">
             {/* Mobile menu button */}
@@ -38,10 +39,7 @@ export default function TopBar({ sidebarOpen, setSidebarOpen }: TopBarProps): Re
               </svg>
             </button>
             
-            {/* Logo */}
-            <div className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-gray-900 dark:text-white">Platform</span>
-            </div>
+            <LogoWithText />
           </div>
           
           {/* Right side navigation */}

@@ -6,7 +6,7 @@ const Home: NextPage = () => {
     <div>
       <Head>
         <title>Platform Dashboard</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" />
       </Head>
 
       <div className="py-6">
