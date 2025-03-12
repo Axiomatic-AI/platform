@@ -16,8 +16,6 @@ interface NavigationItem {
 // Navigation items
 const navigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
-  { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
-  { name: 'Projects', href: '/projects', icon: FolderIcon },
   { name: 'Settings', href: '/settings', icon: CogIcon },
 ]
 

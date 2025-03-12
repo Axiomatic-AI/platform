@@ -3,10 +3,6 @@
 import { useState } from 'react'
 import { useTheme } from 'next-themes'
 
-export const metadata = {
-  title: 'Settings - Platform',
-}
-
 export default function Settings() {
   const { theme, setTheme } = useTheme()
   const [notifications, setNotifications] = useState<boolean>(true)

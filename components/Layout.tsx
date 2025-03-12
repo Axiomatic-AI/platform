@@ -25,7 +25,7 @@ export default function Layout({ children }: LayoutProps): ReactElement | null {
       <div className="flex flex-1">
         <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
         
-        <main className="flex-1 p-4 md:p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+        <main className="flex-1 p-4 md:p-6 bg-gray-50 dark:bg-dark-800 transition-colors duration-200">
           {children}
         </main>
       </div>
