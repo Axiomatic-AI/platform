@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
 import { useTheme } from 'next-themes'
-import LogoWithText from './logo-with-text';
+import LogoWithText from './LogoWithText';
 
 interface TopBarProps {
   sidebarOpen: boolean;
