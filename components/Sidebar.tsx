@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { SVGProps, ReactElement } from 'react'
+import AuthNav from './AuthNav'
 
 interface SidebarProps {
   open: boolean;
@@ -88,12 +89,15 @@ export default function Sidebar({ open, setOpen }: SidebarProps): ReactElement {
             ))}
           </nav>
         </div>
+        <div className="flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700 p-4">
+          <AuthNav />
+        </div>
       </div>
       
       {/* Sidebar for desktop */}
       <div className="hidden md:flex md:flex-shrink-0">
         <div className="flex flex-col w-64">
-          <div className="flex flex-col h-0 flex-1 border-r border-transparent dark:border-gray-700/0 bg-white dark:bg-dark-900 ">
+          <div className="flex flex-col h-0 flex-1 border-r border-transparent dark:border-gray-700/0 bg-white dark:bg-dark-900">
             <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
               <nav className="mt-5 flex-1 px-2 space-y-1">
                 {navigation.map((item) => (
@@ -118,6 +122,9 @@ export default function Sidebar({ open, setOpen }: SidebarProps): ReactElement {
                   </Link>
                 ))}
               </nav>
+            </div>
+            <div className="flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700 p-4">
+              <AuthNav />
             </div>
           </div>
         </div>
