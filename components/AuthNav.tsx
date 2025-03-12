@@ -2,6 +2,7 @@
 
 import { useUser } from '@auth0/nextjs-auth0';
 import Link from 'next/link';
+import LogoutIcon from './icons/LogoutIcon';
 
 export default function AuthNav() {
   const { user, isLoading } = useUser();
@@ -11,7 +12,7 @@ export default function AuthNav() {
   if (!user) return null;
 
   return (
-    <Link
+    <a
       href="/auth/logout"
       className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
     >
@@ -20,25 +21,6 @@ export default function AuthNav() {
         aria-hidden="true"
       />
       Logout
-    </Link>
+    </a>
   );
 }
-
-function LogoutIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      {...props}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-      />
-    </svg>
-  );
-} 
