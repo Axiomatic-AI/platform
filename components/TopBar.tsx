@@ -73,27 +73,6 @@ export default function TopBar({ sidebarOpen, setSidebarOpen }: TopBarProps): Re
                 </svg>
               )}
             </button>
-            
-            {/* User profile */}
-            <div className="ml-3 relative">
-              <button className="bg-gray-200 dark:bg-gray-700 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <span className="sr-only">Open user menu</span>
-                <div className="h-8 w-8 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-              </button>
-            </div>
           </div>
         </div>
       </div>
