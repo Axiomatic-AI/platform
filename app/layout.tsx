@@ -1,7 +1,9 @@
 import '@styles/globals.css'
 import { ThemeProvider } from 'next-themes'
-import Layout from '@components/Layout'
+import Layout from '@components/layout'
 import { Metadata } from 'next'
+import AuthProvider from '@components/AuthProvider'
+import AuthNav from '@components/AuthNav'
 
 export const metadata: Metadata = {
   title: 'Axiomatic Platform',
@@ -16,11 +18,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ThemeProvider attribute="class">
-          <Layout>
-            {children}
-          </Layout>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider attribute="class">
+            <Layout>
+              <div className="fixed top-4 right-4 z-50">
+                <AuthNav />
+              </div>
+              {children}
+            </Layout>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   )
