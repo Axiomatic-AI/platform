@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, ReactNode, ReactElement } from 'react'
 import { useTheme } from 'next-themes'
-import TopBar from './TopBar'
-import Sidebar from './Sidebar'
+import TopBar from './topbar'
+import Sidebar from './sidebar'
 
 interface LayoutProps {
   children: ReactNode;
