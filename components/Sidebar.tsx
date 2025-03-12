@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import React, { SVGProps, ReactElement } from 'react'
 
 interface SidebarProps {
@@ -22,7 +22,7 @@ const navigation: NavigationItem[] = [
 ]
 
 export default function Sidebar({ open, setOpen }: SidebarProps): ReactElement {
-  const router = useRouter()
+  const pathname = usePathname()
   
   return (
     <>
@@ -72,14 +72,14 @@ export default function Sidebar({ open, setOpen }: SidebarProps): ReactElement {
                 key={item.name}
                 href={item.href}
                 className={`group flex items-center px-2 py-2 text-base font-medium rounded-md ${
-                  router.pathname === item.href
+                  pathname === item.href
                     ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
                     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
                 <item.icon
                   className={`mr-4 flex-shrink-0 h-6 w-6 ${
-                    router.pathname === item.href
+                    pathname === item.href
                       ? 'text-gray-900 dark:text-white'
                       : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white'
                   }`}
@@ -103,14 +103,14 @@ export default function Sidebar({ open, setOpen }: SidebarProps): ReactElement {
                     key={item.name}
                     href={item.href}
                     className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                      router.pathname === item.href
+                      pathname === item.href
                         ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
                         : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
                     }`}
                   >
                     <item.icon
                       className={`mr-3 flex-shrink-0 h-6 w-6 ${
-                        router.pathname === item.href
+                        pathname === item.href
                           ? 'text-gray-900 dark:text-white'
                           : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white'
                       }`}
