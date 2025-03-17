@@ -1,4 +1,3 @@
-import { ChatMessage } from './ChatMessage';
 import { ErrorMessage } from './ErrorMessage';
 import { useState } from 'react';
 import { CodeBlock } from './CodeBlock';
