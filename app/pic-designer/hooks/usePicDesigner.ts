@@ -37,7 +37,6 @@ export function usePicDesigner() {
         data = await getClient().post<GenerateCircuitResponse>('/pic/circuit/generate', { query: content });
       }
       
-      // Add new query and response
       const newQuery: Query = {
         query: content,
         response: data.code || 'I apologize, but I encountered an error generating the circuit.',

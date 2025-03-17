@@ -9,11 +9,10 @@ interface Query {
 
 interface MessagesAreaProps {
   queries: Query[];
-  isLoading: boolean;
   error: string | null;
 }
 
-export function MessagesArea({ queries, isLoading, error }: MessagesAreaProps) {
+export function MessagesArea({ queries, error }: MessagesAreaProps) {
   const [currentIndex, setCurrentIndex] = useState(Math.max(0, queries.length - 1));
 
   const goBack = () => {
