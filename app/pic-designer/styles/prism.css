@@ -1,0 +1,110 @@
+/* Remove line highlighting */
+pre[class*="language-"] {
+  margin: 0;
+  padding: 0.8rem 1rem;
+  background: none;
+}
+
+code[class*="language-"] {
+  text-shadow: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* Custom Prism.js theme */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #6b7280;
+}
+
+.token.punctuation {
+  color: #9ca3af;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #b91c1c;
+}
+
+.token.selector,
+.token.string,
+.token.char,
+.token.builtin {
+  color: #059669;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #d97706;
+}
+
+.token.keyword {
+  color: #7c3aed;
+}
+
+.token.function {
+  color: #2563eb;
+}
+
+.token.variable {
+  color: #db2777;
+}
+
+/* Dark mode overrides */
+.dark .token.comment,
+.dark .token.prolog,
+.dark .token.doctype,
+.dark .token.cdata {
+  color: #9ca3af;
+}
+
+.dark .token.punctuation {
+  color: #6b7280;
+}
+
+.dark .token.property,
+.dark .token.tag,
+.dark .token.boolean,
+.dark .token.number,
+.dark .token.constant,
+.dark .token.symbol,
+.dark .token.deleted {
+  color: #f87171;
+}
+
+.dark .token.selector,
+.dark .token.string,
+.dark .token.char,
+.dark .token.builtin {
+  color: #34d399;
+}
+
+.dark .token.operator,
+.dark .token.entity,
+.dark .token.url,
+.dark .language-css .token.string,
+.dark .style .token.string {
+  color: #fbbf24;
+}
+
+.dark .token.keyword {
+  color: #a78bfa;
+}
+
+.dark .token.function {
+  color: #60a5fa;
+}
+
+.dark .token.variable {
+  color: #f472b6;
+} 

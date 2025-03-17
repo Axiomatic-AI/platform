@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation'
 import React, { SVGProps, ReactElement } from 'react'
 import AuthNav from './AuthNav'
 import HomeIcon from './icons/HomeIcon'
-import CogIcon from './icons/CogIcon'
+import CircuitIcon from './icons/CircuitIcon'
 
 interface NavigationItem {
   name: string;
@@ -13,6 +13,7 @@ interface NavigationItem {
 
 const navigationItems: NavigationItem[] = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
+  { name: 'PIC Designer', href: '/pic-designer', icon: CircuitIcon },
 ]
 
 interface SidebarNavigationProps {
