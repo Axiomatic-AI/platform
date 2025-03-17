@@ -15,7 +15,7 @@ interface GenerateCircuitResponse {
 export function usePicDesigner() {
   const [queries, setQueries] = useState<Query[]>([]);
   const [isInitialState, setIsInitialState] = useState(true);
-  const [currentQueryIndex, setCurrentQueryIndex] = useState(0);
+  const [currentQueryIndex, setCurrentQueryIndex] = useState(-1);
 
   const isLoading = useMemo(() => queries.some(q => q.isLoading), [queries]);
 
@@ -23,8 +23,6 @@ export function usePicDesigner() {
     if (isInitialState) {
       setIsInitialState(false);
     }
-
-    setCurrentQueryIndex(prev => prev + 1);
     
     const newQuery: Query = {
       query: content,
@@ -33,6 +31,7 @@ export function usePicDesigner() {
       isError: false
     };
     setQueries(prev => [...prev, newQuery]);
+    setCurrentQueryIndex(prev => prev + 1);
 
     try {
       let data;
