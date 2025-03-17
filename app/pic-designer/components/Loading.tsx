@@ -1,9 +1,14 @@
 "use client";
 
+import { useTheme } from "next-themes";
+
 export const Loading = () => {
+  const { resolvedTheme } = useTheme();
+  const primaryColor = resolvedTheme === "dark" ? "#65747f" : "#65747f";
+
   return (
     <div className="flex items-center justify-center h-full">
-      <div className="relative w-full h-full">
+      <div className="relative w-full h-full dark:opacity-20 opacity-40">
         <svg
           id="Layer_1"
           data-name="Layer 1"
@@ -15,28 +20,47 @@ export const Loading = () => {
             <style>
               {`
                 .logo-path {
-                  fill: #6eb700;
-                  stroke: #6eb700;
-                  stroke-width: 2;
+                  fill: ${primaryColor};
+                  stroke: ${primaryColor};
+                  stroke-width: 1.1;
                   stroke-linecap: round;
                   stroke-linejoin: round;
                   stroke-dasharray: 1000;
                   stroke-dashoffset: 1000;
                   fill-opacity: 0;
-                  animation: drawAndFill 5s ease-in-out infinite;
+                  opacity: 1;
+                  animation: drawAndFill 5s infinite;
                 }
                 @keyframes drawAndFill {
                   0% { 
                     stroke-dashoffset: 1000;
                     fill-opacity: 0;
+                    opacity: 1;
+                  }
+                  65% { 
+                    stroke-dashoffset: 0;
+                    fill-opacity: 0;
+                    opacity: 1;
+                  }
+                  75% { 
+                    stroke-dashoffset: 0;
+                    fill-opacity: 1;
+                    opacity: 1;
                   }
                   85% { 
                     stroke-dashoffset: 0;
-                    fill-opacity: 0;
+                    fill-opacity: 1;
+                    opacity: 1;
+                  }
+                  95% { 
+                    stroke-dashoffset: 0;
+                    fill-opacity: 1;
+                    opacity: 0;
                   }
                   100% { 
                     stroke-dashoffset: 0;
                     fill-opacity: 1;
+                    opacity: 0;
                   }
                 }
               `}

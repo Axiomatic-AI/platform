@@ -2,24 +2,21 @@
 
 import { ChatInput } from './components/ChatInput';
 import { MessagesArea } from './components/MessagesArea';
-import { Loading } from './components/Loading';
 import { usePicDesigner } from './hooks/usePicDesigner';
 
 export default function PICDesigner() {
-  const { queries, isLoading, error, isInitialState, handleSendMessage } = usePicDesigner();
+  const { queries, isInitialState, isLoading, handleSendMessage, currentQueryIndex, setCurrentQueryIndex } = usePicDesigner();
 
   return (
     <div className="flex flex-col max-w-4xl w-full h-full">
       {!isInitialState ? (
         <div className="flex-1 min-h-0 flex flex-col">
           <div className="flex-1 overflow-y-auto">
-            {true ? 
-              <Loading /> : 
-              <MessagesArea 
-                queries={queries}
-                error={error}
-              />
-            }
+            <MessagesArea 
+              queries={queries}
+              currentQueryIndex={currentQueryIndex}
+              setCurrentQueryIndex={setCurrentQueryIndex}
+            />
           </div>
           <div className="flex-none p-4">
             <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />

@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { getClient } from '../../../lib/api';
 
 interface Query {
   query: string;
-  response: string;
+  response: string | null;
+  isLoading: boolean;
+  isError: boolean;
 }
 
 interface GenerateCircuitResponse {
@@ -12,17 +14,25 @@ interface GenerateCircuitResponse {
 
 export function usePicDesigner() {
   const [queries, setQueries] = useState<Query[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [isInitialState, setIsInitialState] = useState(true);
+  const [currentQueryIndex, setCurrentQueryIndex] = useState(0);
+
+  const isLoading = useMemo(() => queries.some(q => q.isLoading), [queries]);
 
   const handleSendMessage = async (content: string) => {
     if (isInitialState) {
       setIsInitialState(false);
     }
+
+    setCurrentQueryIndex(prev => prev + 1);
     
-    setIsLoading(true);
-    setError(null);
+    const newQuery: Query = {
+      query: content,
+      response: '',
+      isLoading: true,
+      isError: false
+    };
+    setQueries(prev => [...prev, newQuery]);
 
     try {
       let data;
@@ -36,30 +46,36 @@ export function usePicDesigner() {
       } else {
         data = await getClient().post<GenerateCircuitResponse>('/pic/circuit/generate', { query: content });
       }
+
+      if (!data.code) {
+        throw new Error('No code returned from API');
+      }
       
-      const newQuery: Query = {
-        query: content,
-        response: data.code || 'I apologize, but I encountered an error generating the circuit.',
-      };
-      setQueries(prev => [...prev, newQuery]);
+      setQueries(prev => prev.map((q, index) => 
+        index === prev.length - 1 
+          ? { ...q, response: data.code, isLoading: false, isError: false }
+          : q
+      ));
     } catch (error) {
       console.error('Error:', error);
-      setError('I apologize, but I encountered an error processing your request. Please try again.');
-      const errorQuery: Query = {
-        query: content,
-        response: 'I apologize, but I encountered an error processing your request. Please try again.',
-      };
-      setQueries(prev => [...prev, errorQuery]);
-    } finally {
-      setIsLoading(false);
+      setQueries(prev => prev.map((q, index) => 
+        index === prev.length - 1 
+          ? { 
+              ...q, 
+              isLoading: false,
+              isError: true 
+            }
+          : q
+      ));
     }
   };
 
   return {
     queries,
     isLoading,
-    error,
     isInitialState,
     handleSendMessage,
+    currentQueryIndex,
+    setCurrentQueryIndex
   };
 } 
