@@ -25,7 +25,17 @@ export function usePicDesigner() {
     setError(null);
 
     try {
-      const data = await getClient().post<GenerateCircuitResponse>('/pic/circuit/generate', { query: content });
+      let data;
+      if (queries.length > 0) {
+        console.log('Refining circuit...');
+        const previousCode = queries[queries.length - 1].response;
+        data = await getClient().post<GenerateCircuitResponse>('/pic/circuit/refine', { 
+          query: content,
+          code: previousCode 
+        });
+      } else {
+        data = await getClient().post<GenerateCircuitResponse>('/pic/circuit/generate', { query: content });
+      }
       
       // Add new query and response
       const newQuery: Query = {
