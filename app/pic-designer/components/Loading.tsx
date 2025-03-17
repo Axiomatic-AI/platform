@@ -15,18 +15,29 @@ export const Loading = () => {
             <style>
               {`
                 .logo-path {
-                  fill: none;
+                  fill: #6eb700;
                   stroke: #6eb700;
                   stroke-width: 2;
                   stroke-linecap: round;
                   stroke-linejoin: round;
                   stroke-dasharray: 1000;
                   stroke-dashoffset: 1000;
-                  animation: grow 3s ease-in-out infinite;
+                  fill-opacity: 0;
+                  animation: drawAndFill 5s ease-in-out infinite;
                 }
-                @keyframes grow {
-                  0% { stroke-dashoffset: 1000; }
-                  100% { stroke-dashoffset: 0; }
+                @keyframes drawAndFill {
+                  0% { 
+                    stroke-dashoffset: 1000;
+                    fill-opacity: 0;
+                  }
+                  85% { 
+                    stroke-dashoffset: 0;
+                    fill-opacity: 0;
+                  }
+                  100% { 
+                    stroke-dashoffset: 0;
+                    fill-opacity: 1;
+                  }
                 }
               `}
             </style>
