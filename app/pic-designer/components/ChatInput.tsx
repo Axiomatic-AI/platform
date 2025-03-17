@@ -34,10 +34,9 @@ export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyPress}
-          disabled={isLoading}
         />
           <button
-            className="inline-flex justify-center p-2 text-primary-500 rounded-lg cursor-pointer hover:bg-primary-100 dark:text-primary-500 dark:hover:bg-gray-600"
+            className="inline-flex justify-center p-2 disabled:opacity-50 text-primary-500 rounded-lg cursor-pointer hover:bg-primary-100 dark:text-primary-500 dark:hover:bg-gray-600"
             onClick={handleSubmit}
             disabled={isLoading || !message.trim()}
           >
