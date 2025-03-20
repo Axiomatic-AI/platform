@@ -4,7 +4,7 @@ import { ThreadWithQueries } from "../types";
 
 export function useGetThread(threadId: string | undefined): UseQueryResult<ThreadWithQueries> {
   return useQuery({
-    queryKey: ['thread', threadId],
+    queryKey: ['threads', threadId],
     queryFn: () => getThread(threadId ?? ''),
     enabled: !!threadId,
   });

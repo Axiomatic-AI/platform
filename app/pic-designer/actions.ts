@@ -78,3 +78,29 @@ export async function postQueryToThread({ threadId, content, code, error }: { th
   });
 }
 
+export async function deleteThread(threadId: string) {
+  const session = await auth0.getSession();
+  if (!session?.user?.sub) {
+    throw new Error('Unauthorized');
+  }
+
+  await prisma.picDesignerThread.delete({
+    where: {
+      id: threadId,
+      userId: session.user.sub,
+    },
+  });
+}
+
+export async function deleteAllThreads() {
+  const session = await auth0.getSession();
+  if (!session?.user?.sub) {
+    throw new Error('Unauthorized');
+  }
+
+  await prisma.picDesignerThread.deleteMany({
+    where: {
+      userId: session.user.sub,
+    },
+  });
+}

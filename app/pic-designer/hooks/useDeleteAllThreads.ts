@@ -1,11 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createThread } from "../actions"
+import { deleteAllThreads } from "../actions";
 
-export function usePostThread() {
+export function useDeleteAllThreads() {
   const queryClient = useQueryClient();
-  
   return useMutation({
-    mutationFn: async ({ title }: { title: string }) => createThread(title),
+    mutationFn: deleteAllThreads,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['threads'] });
     },

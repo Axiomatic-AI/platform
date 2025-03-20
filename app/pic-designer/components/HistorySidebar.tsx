@@ -1,15 +1,17 @@
 'use client';
 
 import { ThreadWithQueries } from '../types';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 interface HistorySidebarProps {
   onThreadSelect: (thread: ThreadWithQueries) => void;
   currentThreadId?: string;
   threads: ThreadWithQueries[];
   isLoading: boolean;
+  onDeleteAll: () => void;
 }
 
-export function HistorySidebar({ onThreadSelect, threads, currentThreadId, isLoading }: HistorySidebarProps) {
+export function HistorySidebar({ onThreadSelect, threads, currentThreadId, isLoading, onDeleteAll }: HistorySidebarProps) {
 
   if (isLoading) {
     return (
@@ -27,8 +29,17 @@ export function HistorySidebar({ onThreadSelect, threads, currentThreadId, isLoa
 
   return (
     <div className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">History</h2>
+        {threads.length > 0 && (
+          <button
+            onClick={onDeleteAll}
+            className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 flex items-center gap-1"
+            title="Clear all history"
+          >
+            <TrashIcon className="h-4 w-4" />
+          </button>
+        )}
       </div>
       <div className="overflow-y-auto h-[calc(100vh-4rem)]">
         {threads.length === 0 ? (

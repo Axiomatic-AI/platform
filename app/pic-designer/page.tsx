@@ -9,6 +9,7 @@ import { useGetThread } from './hooks/useGetThread';
 import { usePostQuery } from './hooks/usePostQuery';
 import { usePostThread } from './hooks/usePostThread';
 import { ThreadWithQueries, PicDesignerQuery } from './types';
+import { useDeleteAllThreads } from './hooks/useDeleteAllThreads';
 
 export default function PICDesigner() {
   const [currentThreadId, setCurrentThreadId] = useState<string | undefined>();
@@ -18,6 +19,11 @@ export default function PICDesigner() {
   const { data: thread, isLoading: isThreadLoading } = useGetThread(currentThreadId);
   const { mutateAsync: postQuery } = usePostQuery();
   const { mutateAsync: postThread } = usePostThread();
+  const { mutateAsync: deleteAllThreads } = useDeleteAllThreads();
+
+  const handleDeleteAllThreads = async () => {
+    await deleteAllThreads();
+  };
 
   const handleThreadSelect = async (thread: ThreadWithQueries) => {
     setCurrentThreadId(thread.id);
@@ -53,6 +59,7 @@ export default function PICDesigner() {
     <div className="flex h-full w-full">
       <div className="flex-0">
         <HistorySidebar 
+          onDeleteAll={handleDeleteAllThreads}
           onThreadSelect={handleThreadSelect}
           threads={threadList ?? []}
           currentThreadId={currentThreadId}

@@ -22,11 +22,11 @@ export function usePostQuery() {
     },
     onMutate: async ({ threadId, content }) => {
       console.log('onMutate', threadId, content);
-      await queryClient.cancelQueries({ queryKey: ['thread', threadId] });
+      await queryClient.cancelQueries({ queryKey: ['threads', threadId] });
 
-      const previousThread = queryClient.getQueryData(['thread', threadId]);
+      const previousThread = queryClient.getQueryData(['threads', threadId]);
 
-      queryClient.setQueryData(['thread', threadId], (old: any) => {
+      queryClient.setQueryData(['threads', threadId], (old: any) => {
         if (!old) return old;
         return {
           ...old,
@@ -51,7 +51,7 @@ export function usePostQuery() {
       console.log('onError', err, newQuery, context);
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['thread', data.id] });
+      queryClient.invalidateQueries({ queryKey: ['threads', data.id] });
     },
   });
 }
