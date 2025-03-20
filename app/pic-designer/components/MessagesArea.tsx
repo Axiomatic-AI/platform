@@ -1,36 +1,40 @@
 import { ErrorMessage } from './ErrorMessage';
-import { useState } from 'react';
 import { CodeBlock } from './CodeBlock';
 import { Loading } from './Loading';
-
-interface Query {
-  query: string;
-  response: string | null;
-  isLoading: boolean;
-  isError: boolean;
-}
+import { ThreadWithQueries } from '../types';
 
 interface MessagesAreaProps {
-  queries: Query[];
+  thread: ThreadWithQueries;
+  isLoading: boolean;
   currentQueryIndex: number;
-  setCurrentQueryIndex: (cb: (prev: number) => number) => void;
+  setCurrentQueryIndex: (index: number) => void;
 }
 
-export function MessagesArea({ queries, currentQueryIndex, setCurrentQueryIndex }: MessagesAreaProps) {
-
+export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQueryIndex }: MessagesAreaProps) {
   const goBack = () => {
-    setCurrentQueryIndex(prev => Math.max(0, prev - 1));
+    setCurrentQueryIndex(Math.max(0, currentQueryIndex - 1));
   };
 
   const goForward = () => {
-    setCurrentQueryIndex(prev => Math.min(queries.length - 1, prev + 1));
+    setCurrentQueryIndex(Math.min(thread.queries.length - 1, currentQueryIndex + 1));
   };
 
-  const currentQuery = queries[currentQueryIndex];
+  const currentQuery = thread.queries[currentQueryIndex];
 
-  if (queries.length === 0 || currentQueryIndex < 0 || !currentQuery) {
+  if (thread.queries.length === 0 || currentQueryIndex < 0 || !currentQuery) {
     return null;
   }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loading />
+      </div>
+    );
+  }
+
+  const isCurrentQueryLoading = currentQuery.code === undefined && currentQuery.error === undefined;
+  const isCurrentQueryError = currentQuery.error !== undefined;
 
   return (
     <div className="h-full flex flex-col">
@@ -46,17 +50,17 @@ export function MessagesArea({ queries, currentQueryIndex, setCurrentQueryIndex 
         </button>
         <div className="text-center text-gray-600 dark:text-gray-400">
           <h4 className="text-xs font-bold mb-1">
-            Query {currentQueryIndex + 1} of {queries.length}
+            Query {currentQueryIndex + 1} of {thread.queries.length}
           </h4>
           <h3 className="text-sm">
-            {currentQuery.query.length > 50 
-              ? `${currentQuery.query.slice(0, 50)}...` 
-              : currentQuery.query}
+            {currentQuery.content.length > 50 
+              ? `${currentQuery.content.slice(0, 50)}...` 
+              : currentQuery.content}
           </h3>
         </div>
         <button
           onClick={goForward}
-          disabled={currentQueryIndex === queries.length - 1}
+          disabled={currentQueryIndex === thread.queries.length - 1}
           className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,20 +70,20 @@ export function MessagesArea({ queries, currentQueryIndex, setCurrentQueryIndex 
       </div>
 
       <div className="flex-1 overflow-y-auto">
-      <div className="max-w-4xl mx-auto w-full h-full p-4">
-        {currentQuery.isLoading && <Loading />}
-        {currentQuery.isError && <ErrorMessage />}
-          {!currentQuery.isLoading && !currentQuery.isError && currentQuery.response && (
+        <div className="max-w-4xl mx-auto w-full h-full p-4">
+          {isCurrentQueryLoading && <Loading />}
+          {isCurrentQueryError && <ErrorMessage />}
+          {currentQuery.code && (
             <div className="flex flex-col items-center justify-center min-h-[300px] space-y-6">
               <div className="w-full">
                 <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Query:</div>
                 <div className="w-full p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div className="text-gray-900 dark:text-gray-100">{currentQuery.query}</div>
+                  <div className="text-gray-900 dark:text-gray-100">{currentQuery.content}</div>
                 </div>
               </div>
               <div className="w-full">
                 <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Response:</div>
-                <CodeBlock code={currentQuery.response} />
+                <CodeBlock code={currentQuery.code} />
               </div>
             </div>
           )}

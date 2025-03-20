@@ -1,0 +1,80 @@
+'use server';
+
+import { auth0 } from '@lib/auth0';
+import { prisma } from '@lib/prisma';
+import { ThreadWithQueries } from './types';
+
+export async function createThread(title: string): Promise<ThreadWithQueries> {
+  const session = await auth0.getSession();
+  if (!session?.user?.sub) {
+    throw new Error('Unauthorized');
+  }
+
+  return prisma.picDesignerThread.create({
+    data: {
+      userId: session.user.sub,
+      title,
+      queries: [],
+    },
+  }) as Promise<ThreadWithQueries>;
+}
+
+export async function getThreads(): Promise<ThreadWithQueries[]> {
+  const session = await auth0.getSession();
+  if (!session?.user?.sub) {
+    throw new Error('Unauthorized');
+  }
+
+  return prisma.picDesignerThread.findMany({
+    where: {
+      userId: session.user.sub,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  }) as Promise<ThreadWithQueries[]>;
+}
+
+export async function getThread(threadId: string): Promise<ThreadWithQueries | null> {
+  const session = await auth0.getSession();
+  if (!session?.user?.sub) {
+    throw new Error('Unauthorized');
+  }
+
+  return prisma.picDesignerThread.findUnique({
+    where: {
+      id: threadId,
+      userId: session.user.sub,
+    },
+  }) as Promise<ThreadWithQueries | null>;
+}
+
+export async function postQueryToThread({ threadId, content, code, error }: { threadId: string, content: string, code?: string, error?: string }) {
+  const session = await auth0.getSession();
+  if (!session?.user?.sub) {
+    throw new Error('Unauthorized');
+  }
+
+  const thread = await prisma.picDesignerThread.findUnique({
+    where: {
+      id: threadId,
+      userId: session.user.sub,
+    },
+  });
+
+  if (!thread) {
+    throw new Error('Thread not found');
+  }
+
+  const existingQueries = thread.queries as { content: string; code: string | undefined, error: string | undefined }[];
+  return prisma.picDesignerThread.update({
+    where: { id: threadId },
+    data: {
+      queries: [
+        ...existingQueries,
+        { content, code, error },
+      ],
+    },
+  });
+}
+

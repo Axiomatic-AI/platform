@@ -3,6 +3,7 @@ import { ThemeProvider } from 'next-themes'
 import Layout from '@components/Layout'
 import { Metadata } from 'next'
 import AuthProvider from '@components/AuthProvider'
+import { Providers } from './pic-designer/providers'
 
 export const metadata: Metadata = {
   title: 'Axiomatic Platform',
@@ -19,9 +20,11 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <ThemeProvider attribute="class">
-            <Layout>
-              {children} 
-            </Layout>
+            <Providers>
+              <Layout>
+                {children} 
+              </Layout>
+            </Providers>
           </ThemeProvider>
         </AuthProvider>
       </body>
