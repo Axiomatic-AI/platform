@@ -53,7 +53,7 @@ export function HistorySidebar({ onThreadSelect, threads, currentThreadId, isLoa
   }
 
   return (
-    <div className='bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 w-64 h-full'>
+    <div className='bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 w-64 h-full overflow-y-scroll '>
       <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}

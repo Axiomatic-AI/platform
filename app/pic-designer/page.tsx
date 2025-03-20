@@ -9,6 +9,7 @@ import { usePostQuery } from './hooks/usePostQuery';
 import { ThreadWithQueries, PicDesignerQuery } from './types';
 import { useDeleteAllThreads } from './hooks/useDeleteAllThreads';
 
+
 export default function PICDesigner() {
   const [currentThreadId, setCurrentThreadId] = useState<string | undefined>();
   const [currentQueryIndex, setCurrentQueryIndex] = useState<number>(0);
