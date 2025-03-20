@@ -16,7 +16,7 @@ export default function PICDesigner() {
 
   const { data: threadList, isLoading: isThreadListLoading } = useGetThreadList();
   const { mutateAsync: postQuery, isPending: isPostQueryLoading } = usePostQuery();
-  const { mutateAsync: deleteAllThreads } = useDeleteAllThreads();
+  const { mutateAsync: deleteAllThreads, isPending: isDeletingThreads } = useDeleteAllThreads();
 
   const thread = threadList?.find(thread => thread.id === currentThreadId);
 
@@ -68,6 +68,7 @@ export default function PICDesigner() {
           threads={threadList ?? []}
           currentThreadId={currentThreadId}
           isLoading={isThreadListLoading}
+          isDeleting={isDeletingThreads}
         />
       </div>
       <button

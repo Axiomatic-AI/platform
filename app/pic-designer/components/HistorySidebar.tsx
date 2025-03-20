@@ -1,7 +1,7 @@
 'use client';
 
 import { ThreadWithQueries } from '../types';
-import { TrashIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, ChevronLeftIcon, ChevronRightIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
 interface HistorySidebarProps {
@@ -10,9 +10,10 @@ interface HistorySidebarProps {
   threads: ThreadWithQueries[];
   isLoading: boolean;
   onDeleteAll: () => void;
+  isDeleting: boolean;
 }
 
-export function HistorySidebar({ onThreadSelect, threads, currentThreadId, isLoading, onDeleteAll }: HistorySidebarProps) {
+export function HistorySidebar({ onThreadSelect, threads, currentThreadId, isLoading, onDeleteAll, isDeleting }: HistorySidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   if (isCollapsed) {
@@ -66,10 +67,15 @@ export function HistorySidebar({ onThreadSelect, threads, currentThreadId, isLoa
         {threads.length > 0 && (
           <button
             onClick={onDeleteAll}
-            className="ml-auto text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 flex items-center gap-1"
+            disabled={isDeleting}
+            className="ml-auto text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 flex items-center gap-1 disabled:opacity-50"
             title="Clear all history"
           >
-            <TrashIcon className="h-4 w-4" />
+            {isDeleting ? (
+              <ArrowPathIcon className="h-4 w-4 animate-spin-slow text-red-600 dark:text-red-400" />
+            ) : (
+              <TrashIcon className="h-4 w-4" />
+            )}
           </button>
         )}
       </div>

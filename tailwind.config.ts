@@ -8,6 +8,10 @@ const config: Config = {
   darkMode: 'class',
   theme: {
     extend: {
+      animation: {
+        'spin': 'spin 1s linear infinite',
+        'spin-slow': 'spin 2s linear infinite',
+      },
       colors: {
         primary: {
           50: '#f0fbe8',
