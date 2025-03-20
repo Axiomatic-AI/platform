@@ -37,7 +37,7 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
   const isCurrentQueryLoading = isLoading && (currentQuery.code === undefined && currentQuery.error === undefined);
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col p">
       <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
         <button
           onClick={goBack}
@@ -69,7 +69,7 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto mt-4">
         <div className="max-w-4xl mx-auto w-full h-full p-4">
           {isCurrentQueryLoading && <Loading />}
           {currentQuery.error && <ErrorMessage />}
