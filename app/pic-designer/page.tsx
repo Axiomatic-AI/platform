@@ -45,8 +45,13 @@ export default function PICDesigner() {
     const previousCode = getPreviousCode();
     const thread = await postQuery({ threadId: currentThreadId, content, previousCode });
     setCurrentThreadId(thread.id);
-    setCurrentQueryIndex(thread.queries.length - 1);
   };
+
+  useEffect(() => {
+    if(thread) {
+      setCurrentQueryIndex(thread.queries.length - 1);
+    }
+  }, [thread]);
 
   return (
     <div className="flex h-full w-full">
@@ -66,7 +71,7 @@ export default function PICDesigner() {
               <MessagesArea thread={thread} isLoading={isPostQueryLoading} currentQueryIndex={currentQueryIndex} setCurrentQueryIndex={setCurrentQueryIndex} />
             </div>
             <div className="flex-none p-4">
-              <ChatInput onSendMessage={onSendMessage} isLoading={false} />
+              <ChatInput onSendMessage={onSendMessage} isLoading={isPostQueryLoading} />
             </div>
           </div>
         ) : (
@@ -75,7 +80,7 @@ export default function PICDesigner() {
               <h1 className="font-bold text-gray-800 dark:text-white mb-2">
                 What PIC would you like to build today?
               </h1>
-              <ChatInput onSendMessage={onSendMessage} isLoading={false} />
+              <ChatInput onSendMessage={onSendMessage} isLoading={isPostQueryLoading} />
             </div>
           </div>
         )}

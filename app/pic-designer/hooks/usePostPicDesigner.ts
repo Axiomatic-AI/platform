@@ -10,23 +10,27 @@ interface GenerateCircuitParams {
   previousCode?: string;
 }
 
+const mocked = false
+
 export function usePostPicDesigner() {
   return useMutation({
     mutationFn: async ({ content, previousCode }: GenerateCircuitParams) => {
       const shouldRefine = previousCode !== undefined;
-      return shouldRefine ? "refining" : "test2";
-      // const endpoint = shouldRefine ? '/pic/circuit/refine' : '/pic/circuit/generate';
+      if (mocked) {
+        return shouldRefine ? "refining" : "test2";
+      }
+      const endpoint = shouldRefine ? '/pic/circuit/refine' : '/pic/circuit/generate';
       
-      // const response = await getClient().post<GenerateCircuitResponse>(endpoint, { 
-      //   query: content,
-      //   ...(shouldRefine && { code: previousCode })
-      // });
+      const response = await getClient().post<GenerateCircuitResponse>(endpoint, { 
+        query: content,
+        ...(shouldRefine && { code: previousCode })
+      });
 
-      // if (!response.code) {
-      //   throw new Error('No code returned from API');
-      // }
+      if (!response.code) {
+        throw new Error('No code returned from API');
+      }
 
-      // return response.code;
+      return response.code;
     }
   });
 

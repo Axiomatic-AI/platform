@@ -11,7 +11,9 @@ interface MessagesAreaProps {
 }
 
 export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQueryIndex }: MessagesAreaProps) {
-  if (isLoading) {
+  if (isLoading && !thread) {
+    // If we are loading and there is no thread, we are in a new thread
+    // Otherwise, we are in an existing thread and should show the thread
     return (
       <div className="flex items-center justify-center h-full">
         <Loading />
@@ -32,9 +34,6 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
   };
 
   const currentQuery = thread.queries[Math.min(currentQueryIndex, thread.queries.length - 1)];
-
-  const isCurrentQueryLoading = !currentQuery || (currentQuery.code === undefined && currentQuery.error === undefined);
-  const isCurrentQueryError = currentQuery.error !== undefined;
 
   return (
     <div className="h-full flex flex-col">
@@ -71,8 +70,8 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
 
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto w-full h-full p-4">
-          {isCurrentQueryLoading && <Loading />}
-          {isCurrentQueryError && <ErrorMessage />}
+          {isLoading && <Loading />}
+          {currentQuery.error && <ErrorMessage />}
           {currentQuery.code && (
             <div className="flex flex-col items-center justify-center min-h-[300px] space-y-6">
               <div className="w-full">

@@ -9,7 +9,6 @@ interface PostQueryProps {
   previousCode: string | undefined;
 }
 
-
 export function usePostQuery(): UseMutationResult<ThreadWithQueries, Error, PostQueryProps> {
   const queryClient = useQueryClient();
   const { mutateAsync: postPicDesigner } = usePostPicDesigner();
@@ -29,6 +28,41 @@ export function usePostQuery(): UseMutationResult<ThreadWithQueries, Error, Post
           throw new Error("Failed to generate circuit");
         }
         return postQueryToThread({ threadId, content, error: "Failed to generate circuit" });
+      }
+    },
+    onMutate: async ({ threadId, content }) => {
+      await queryClient.cancelQueries({ queryKey: ['threads'] });
+
+      const previousThreads = queryClient.getQueryData<ThreadWithQueries[]>(['threads']);
+
+      // Create an optimistic query that matches the JsonValue type
+      const optimisticQuery = { content } as const;
+
+      if(!previousThreads || !threadId) {
+        // No optimistic updates if we are in a new thread
+        return { previousThreads: [] };
+      }
+
+      queryClient.setQueryData<ThreadWithQueries[]>(['threads'], (old) => {
+        if (!old) return old;
+        return old.map((thread) => {
+          if (thread.id === threadId) {
+            return {
+              ...thread,
+              queries: [...thread.queries, optimisticQuery],
+            };
+          }
+          return thread;
+        });
+      });
+
+      // Return a context object with the snapshotted value
+      return { previousThreads };
+    },
+    onError: (err, newTodo, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousThreads) {
+        queryClient.setQueryData(['threads'], context.previousThreads);
       }
     },
     onSuccess: (data) => {
