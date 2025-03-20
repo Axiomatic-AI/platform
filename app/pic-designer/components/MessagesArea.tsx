@@ -34,6 +34,7 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
   };
 
   const currentQuery = thread.queries[Math.min(currentQueryIndex, thread.queries.length - 1)];
+  const isCurrentQueryLoading = isLoading && (currentQuery.code === undefined && currentQuery.error === undefined);
 
   return (
     <div className="h-full flex flex-col">
@@ -70,7 +71,7 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
 
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto w-full h-full p-4">
-          {isLoading && <Loading />}
+          {isCurrentQueryLoading && <Loading />}
           {currentQuery.error && <ErrorMessage />}
           {currentQuery.code && (
             <div className="flex flex-col items-center justify-center min-h-[300px] space-y-6">
