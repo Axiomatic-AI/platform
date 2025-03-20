@@ -4,13 +4,25 @@ import { Loading } from './Loading';
 import { ThreadWithQueries } from '../types';
 
 interface MessagesAreaProps {
-  thread: ThreadWithQueries;
+  thread?: ThreadWithQueries;
   isLoading: boolean;
   currentQueryIndex: number;
   setCurrentQueryIndex: (index: number) => void;
 }
 
 export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQueryIndex }: MessagesAreaProps) {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loading />
+      </div>
+    );
+  }
+
+  if (!thread) {
+    throw new Error("No thread provided.");
+  }
+
   const goBack = () => {
     setCurrentQueryIndex(Math.max(0, currentQueryIndex - 1));
   };
@@ -19,15 +31,7 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
     setCurrentQueryIndex(Math.min(thread.queries.length - 1, currentQueryIndex + 1));
   };
 
-  const currentQuery = thread.queries[currentQueryIndex];
-
-  if (isLoading || thread.queries.length === 0 || currentQueryIndex < 0 || !currentQuery) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <Loading />
-      </div>
-    );
-  }
+  const currentQuery = thread.queries[Math.min(currentQueryIndex, thread.queries.length - 1)];
 
   const isCurrentQueryLoading = !currentQuery || (currentQuery.code === undefined && currentQuery.error === undefined);
   const isCurrentQueryError = currentQuery.error !== undefined;

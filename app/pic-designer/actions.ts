@@ -49,7 +49,7 @@ export async function getThread(threadId: string): Promise<ThreadWithQueries | n
   }) as Promise<ThreadWithQueries | null>;
 }
 
-export async function postQueryToThread({ threadId, content, code, error }: { threadId: string, content: string, code?: string, error?: string }) {
+export async function postQueryToThread({ threadId, content, code, error }: { threadId: string, content: string, code?: string, error?: string }): Promise<ThreadWithQueries> {
   const session = await auth0.getSession();
   if (!session?.user?.sub) {
     throw new Error('Unauthorized');
@@ -75,7 +75,7 @@ export async function postQueryToThread({ threadId, content, code, error }: { th
         { content, code, error },
       ],
     },
-  });
+  }) as Promise<ThreadWithQueries>;
 }
 
 export async function deleteThread(threadId: string) {

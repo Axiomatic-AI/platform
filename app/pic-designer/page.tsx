@@ -3,11 +3,9 @@
 import { ChatInput } from './components/ChatInput';
 import { MessagesArea } from './components/MessagesArea';
 import { HistorySidebar } from './components/HistorySidebar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useGetThreadList } from './hooks/useGetThreadList';
-import { useGetThread } from './hooks/useGetThread';
 import { usePostQuery } from './hooks/usePostQuery';
-import { usePostThread } from './hooks/usePostThread';
 import { ThreadWithQueries, PicDesignerQuery } from './types';
 import { useDeleteAllThreads } from './hooks/useDeleteAllThreads';
 
@@ -16,10 +14,10 @@ export default function PICDesigner() {
   const [currentQueryIndex, setCurrentQueryIndex] = useState<number>(0);
 
   const { data: threadList, isLoading: isThreadListLoading } = useGetThreadList();
-  const { data: thread, isLoading: isThreadLoading } = useGetThread(currentThreadId);
-  const { mutateAsync: postQuery } = usePostQuery();
-  const { mutateAsync: postThread, isPending: isPostThreadLoading } = usePostThread();
+  const { mutateAsync: postQuery, isPending: isPostQueryLoading } = usePostQuery();
   const { mutateAsync: deleteAllThreads } = useDeleteAllThreads();
+
+  const thread = threadList?.find(thread => thread.id === currentThreadId);
 
   const handleDeleteAllThreads = async () => {
     await deleteAllThreads();
@@ -27,12 +25,13 @@ export default function PICDesigner() {
 
   const handleThreadSelect = async (thread: ThreadWithQueries) => {
     setCurrentThreadId(thread.id);
+    setCurrentQueryIndex(0);
   };
 
   const getPreviousCode = () => {
-    if (!thread?.queries || currentQueryIndex === 0) return undefined;
+    if (!thread?.queries) return undefined;
     
-    const previousQueries = (thread.queries as PicDesignerQuery[]).slice(0, currentQueryIndex);
+    const previousQueries = (thread.queries as PicDesignerQuery[])
     const lastSuccessfulQuery = previousQueries
       .reverse()
       .find(query => !query.error);
@@ -41,18 +40,10 @@ export default function PICDesigner() {
   };
 
   const onSendMessage = async (content: string) => {
-    let threadId = currentThreadId;
-
-    if (!threadId) {
-      const thread = await postThread({ title: content });
-      threadId = thread.id;
-      setCurrentThreadId(thread.id);
-    };
-
     const previousCode = getPreviousCode();
-    postQuery({ threadId, content, previousCode });
-
-    setCurrentQueryIndex(thread?.queries.length ?? 0);
+    const thread = await postQuery({ threadId: currentThreadId, content, previousCode });
+    setCurrentThreadId(thread.id);
+    setCurrentQueryIndex(thread.queries.length - 1);
   };
 
   return (
@@ -67,10 +58,10 @@ export default function PICDesigner() {
         />
       </div>
       <div className="flex-1 flex flex-col max-w-4xl h-full mx-auto">
-        {thread ? (
+        {thread || isPostQueryLoading ? (
           <div className="flex-1 min-h-0 flex flex-col">
             <div className="flex-1 overflow-y-auto">
-              <MessagesArea thread={thread} isLoading={isThreadLoading || isPostThreadLoading} currentQueryIndex={currentQueryIndex} setCurrentQueryIndex={setCurrentQueryIndex} />
+              <MessagesArea thread={thread} isLoading={isPostQueryLoading} currentQueryIndex={currentQueryIndex} setCurrentQueryIndex={setCurrentQueryIndex} />
             </div>
             <div className="flex-none p-4">
               <ChatInput onSendMessage={onSendMessage} isLoading={false} />
