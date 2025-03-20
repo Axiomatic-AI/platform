@@ -18,7 +18,7 @@ export default function PICDesigner() {
   const { data: threadList, isLoading: isThreadListLoading } = useGetThreadList();
   const { data: thread, isLoading: isThreadLoading } = useGetThread(currentThreadId);
   const { mutateAsync: postQuery } = usePostQuery();
-  const { mutateAsync: postThread } = usePostThread();
+  const { mutateAsync: postThread, isPending: isPostThreadLoading } = usePostThread();
   const { mutateAsync: deleteAllThreads } = useDeleteAllThreads();
 
   const handleDeleteAllThreads = async () => {
@@ -50,7 +50,7 @@ export default function PICDesigner() {
     };
 
     const previousCode = getPreviousCode();
-    postQuery({ threadId, content, previousCode: previousCode ?? undefined });
+    postQuery({ threadId, content, previousCode });
 
     setCurrentQueryIndex(thread?.queries.length ?? 0);
   };
@@ -70,7 +70,7 @@ export default function PICDesigner() {
         {thread ? (
           <div className="flex-1 min-h-0 flex flex-col">
             <div className="flex-1 overflow-y-auto">
-              <MessagesArea thread={thread} isLoading={isThreadLoading} currentQueryIndex={currentQueryIndex} setCurrentQueryIndex={setCurrentQueryIndex} />
+              <MessagesArea thread={thread} isLoading={isThreadLoading || isPostThreadLoading} currentQueryIndex={currentQueryIndex} setCurrentQueryIndex={setCurrentQueryIndex} />
             </div>
             <div className="flex-none p-4">
               <ChatInput onSendMessage={onSendMessage} isLoading={false} />

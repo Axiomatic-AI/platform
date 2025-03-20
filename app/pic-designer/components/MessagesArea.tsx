@@ -21,11 +21,7 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
 
   const currentQuery = thread.queries[currentQueryIndex];
 
-  if (thread.queries.length === 0 || currentQueryIndex < 0 || !currentQuery) {
-    return null;
-  }
-
-  if (isLoading) {
+  if (isLoading || thread.queries.length === 0 || currentQueryIndex < 0 || !currentQuery) {
     return (
       <div className="flex items-center justify-center h-full">
         <Loading />
@@ -33,7 +29,7 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
     );
   }
 
-  const isCurrentQueryLoading = currentQuery.code === undefined && currentQuery.error === undefined;
+  const isCurrentQueryLoading = !currentQuery || (currentQuery.code === undefined && currentQuery.error === undefined);
   const isCurrentQueryError = currentQuery.error !== undefined;
 
   return (

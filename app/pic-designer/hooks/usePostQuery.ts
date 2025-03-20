@@ -21,9 +21,7 @@ export function usePostQuery() {
       }
     },
     onMutate: async ({ threadId, content }) => {
-      console.log('onMutate', threadId, content);
       await queryClient.cancelQueries({ queryKey: ['threads', threadId] });
-
       const previousThread = queryClient.getQueryData(['threads', threadId]);
 
       queryClient.setQueryData(['threads', threadId], (old: any) => {
@@ -33,12 +31,9 @@ export function usePostQuery() {
           queries: [
             ...old.queries,
             {
-              id: 'temp-' + Date.now(),
-              threadId,
               content,
               code: undefined,
               error: undefined,
-              createdAt: new Date().toISOString(),
             },
           ],
         };
@@ -50,8 +45,8 @@ export function usePostQuery() {
     onError: (err, newQuery, context) => {
       console.log('onError', err, newQuery, context);
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['threads', data.id] });
+    onSettled: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['threads', data?.id] });
     },
   });
 }
