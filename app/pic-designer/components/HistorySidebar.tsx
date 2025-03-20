@@ -29,7 +29,7 @@ export function HistorySidebar({ onThreadSelect, threads, currentThreadId, isLoa
 
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 w-64 h-screen">
+      <div className="bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 w-64 h-full">
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
@@ -53,7 +53,7 @@ export function HistorySidebar({ onThreadSelect, threads, currentThreadId, isLoa
   }
 
   return (
-    <div className={`bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ${isCollapsed ? 'w-12' : 'w-64'}`}>
+    <div className='bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 w-64 h-full'>
       <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -73,34 +73,32 @@ export function HistorySidebar({ onThreadSelect, threads, currentThreadId, isLoa
           </button>
         )}
       </div>
-      {!isCollapsed && (
-        <div className="overflow-y-auto h-[calc(100vh-4rem)]">
-          {threads.length === 0 ? (
-            <div className="p-4 text-sm text-gray-500 dark:text-gray-400">
-              No history yet
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
-              {threads.map((thread) => (
-                <button
-                  key={thread.id}
-                  onClick={() => onThreadSelect(thread)}
-                  className={`w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                    currentThreadId === thread.id ? 'bg-gray-50 dark:bg-gray-700' : ''
-                  }`}
-                >
-                  <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    {thread.title}
-                  </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    {new Date(thread.createdAt).toLocaleDateString()}
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      <div className="overflow-y-auto">
+        {threads.length === 0 ? (
+          <div className="p-4 text-sm text-gray-500 dark:text-gray-400">
+            No history yet
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            {threads.map((thread) => (
+              <button
+                key={thread.id}
+                onClick={() => onThreadSelect(thread)}
+                className={`w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                  currentThreadId === thread.id ? 'bg-gray-50 dark:bg-gray-700' : ''
+                }`}
+              >
+                <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                  {thread.title}
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {new Date(thread.createdAt).toLocaleDateString()}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 } 
