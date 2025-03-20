@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "deploy": "netlify deploy --build"
+    "deploy": "netlify deploy --build",
+    "test": "jest"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.1.0",
@@ -24,13 +25,17 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.13.10",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "autoprefixer": "^10.4.21",
+    "jest": "^29.7.0",
     "next-themes": "^0.4.5",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.1",
+    "ts-jest": "^29.2.6",
     "typescript": "^5.8.2"
   }
 }
