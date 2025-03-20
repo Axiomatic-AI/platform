@@ -4,7 +4,8 @@ import { useTheme } from "next-themes";
 
 export const Loading = () => {
   const { resolvedTheme } = useTheme();
-  const primaryColor = resolvedTheme === "dark" ? "#65747f" : "#65747f";
+  const outlineColor = resolvedTheme === "dark" ? "#65747f" : "#65747f";
+  const fillColor = "#6EB600";
 
   return (
     <div className="flex items-center justify-center h-full">
@@ -20,8 +21,8 @@ export const Loading = () => {
             <style>
               {`
                 .logo-path {
-                  fill: ${primaryColor};
-                  stroke: ${primaryColor};
+                  fill: ${outlineColor};
+                  stroke: ${outlineColor};
                   stroke-width: 1.1;
                   stroke-linecap: round;
                   stroke-linejoin: round;
@@ -33,6 +34,8 @@ export const Loading = () => {
                 }
                 @keyframes drawAndFill {
                   0% { 
+                    fill: ${outlineColor};
+                    stroke: ${outlineColor};
                     stroke-dashoffset: 1000;
                     fill-opacity: 0;
                     opacity: 1;
@@ -41,25 +44,35 @@ export const Loading = () => {
                     stroke-dashoffset: 0;
                     fill-opacity: 0;
                     opacity: 1;
+                    fill: ${outlineColor};
+                    stroke: ${outlineColor};
                   }
                   75% { 
                     stroke-dashoffset: 0;
                     fill-opacity: 1;
                     opacity: 1;
+                    fill: ${fillColor};
+                    stroke: ${fillColor};
                   }
                   85% { 
                     stroke-dashoffset: 0;
                     fill-opacity: 1;
                     opacity: 1;
+                    fill: ${fillColor};
+                    stroke: ${fillColor};
                   }
                   95% { 
                     stroke-dashoffset: 0;
                     fill-opacity: 1;
                     opacity: 0;
+                    fill: ${fillColor};
+                    stroke: ${fillColor};
                   }
                   100% { 
                     stroke-dashoffset: 0;
                     fill-opacity: 1;
+                    fill: ${fillColor};
+                    stroke: ${fillColor};
                     opacity: 0;
                   }
                 }
