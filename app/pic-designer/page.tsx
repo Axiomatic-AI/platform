@@ -21,6 +21,8 @@ export default function PICDesigner() {
 
   const handleDeleteAllThreads = async () => {
     await deleteAllThreads();
+    setCurrentThreadId(undefined);
+    setCurrentQueryIndex(0);
   };
 
   const handleThreadSelect = async (thread: ThreadWithQueries) => {
