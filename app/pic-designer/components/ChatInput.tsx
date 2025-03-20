@@ -5,9 +5,10 @@ import { useState, KeyboardEvent } from 'react';
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
   isLoading: boolean;
+  placeholder?: string;
 }
 
-export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
+export function ChatInput({ onSendMessage, isLoading, placeholder = 'Describe your PIC circuit requirements...' }: ChatInputProps) {
   const [message, setMessage] = useState('');
 
   const handleSubmit = () => {
@@ -29,7 +30,7 @@ export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
       <div className="flex items-center pl-0 pr-3 py-2 rounded-lg bg-white dark:border-none border border-gray-200 dark:bg-gray-700">
         <textarea 
           className="block resize-none mx-2 p-2 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-          placeholder="Describe your PIC circuit requirements..."
+          placeholder={placeholder}
           rows={1}
           value={message}
           onChange={(e) => setMessage(e.target.value)}

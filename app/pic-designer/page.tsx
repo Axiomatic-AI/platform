@@ -88,7 +88,7 @@ export default function PICDesigner() {
               <MessagesArea thread={thread} isLoading={isPostQueryLoading} currentQueryIndex={currentQueryIndex} setCurrentQueryIndex={setCurrentQueryIndex} />
             </div>
             <div className="flex-none p-4">
-              <ChatInput onSendMessage={onSendMessage} isLoading={isPostQueryLoading} />
+              <ChatInput onSendMessage={onSendMessage} isLoading={isPostQueryLoading} placeholder="Refine your design..." />
             </div>
           </div>
         ) : (
