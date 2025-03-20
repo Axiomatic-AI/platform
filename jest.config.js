@@ -4,6 +4,6 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },
-  testMatch: ['**/__tests__/**/*.test.ts'],
+  testMatch: ['**/*.test.ts'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
 }; 
