@@ -108,19 +108,13 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
           {currentQuery.error && (<ErrorMessage />)}
           {currentQuery.code && (
             <div className="flex flex-col items-center justify-center min-h-[300px] space-y-6">
-              <div className="w-full">
-                <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Query:</div>
-                <div className="w-full p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div className="text-gray-900 dark:text-gray-100">{currentQuery.content}</div>
+              <div className="w-full grid grid-cols-2 gap-6 h-[calc(100vh-400px)]">
+                <div className="h-full overflow-hidden flex flex-col">
+                  <div className="flex-1 overflow-y-auto">
+                    <CodeBlock code={currentQuery.code} />
+                  </div>
                 </div>
-              </div>
-              <div className="w-full grid grid-cols-2 gap-6">
-                <div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Response:</div>
-                  <CodeBlock code={currentQuery.code} />
-                </div>
-                <div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Result:</div>
+                <div className="h-full">
                   <PicDisplay 
                     base64Image={currentQuery.executionResult?.base64Image}
                     error={currentQuery.executionResult?.error}
