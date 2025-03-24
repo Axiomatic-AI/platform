@@ -5,18 +5,21 @@ import AuthNav from './AuthNav'
 import HomeIcon from './icons/HomeIcon'
 import CircuitIcon from './icons/CircuitIcon'
 import DocumentIcon from './icons/DocumentIcon'
+import PythonIcon from './icons/PythonIcon'
 import { SidebarNavigation } from './SidebarNavigation'
 
 interface NavigationItem {
   name: string;
   href: string;
   icon: (props: SVGProps<SVGSVGElement>) => ReactElement;
+  external?: boolean;
 }
 
 const navigationItems: NavigationItem[] = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
   { name: 'PIC Designer', href: '/pic-designer', icon: CircuitIcon },
   { name: 'Document Analyzer', href: '/document-analyzer', icon: DocumentIcon },
+  { name: 'Playground', href: 'https://playground.axiomatic-ai.com', icon: PythonIcon, external: true },
 ]
 
 interface MobileSidebarProps {
