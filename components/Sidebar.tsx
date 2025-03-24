@@ -4,6 +4,7 @@ import React, { SVGProps, ReactElement } from 'react'
 import AuthNav from './AuthNav'
 import HomeIcon from './icons/HomeIcon'
 import CircuitIcon from './icons/CircuitIcon'
+import DocumentIcon from './icons/DocumentIcon'
 import { SidebarNavigation } from './SidebarNavigation'
 
 interface NavigationItem {
@@ -15,6 +16,7 @@ interface NavigationItem {
 const navigationItems: NavigationItem[] = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
   { name: 'PIC Designer', href: '/pic-designer', icon: CircuitIcon },
+  { name: 'Document Analyzer', href: '/document-analyzer', icon: DocumentIcon },
 ]
 
 interface MobileSidebarProps {
@@ -58,7 +60,7 @@ interface DesktopSidebarProps {
 function DesktopSidebar({ pathname }: DesktopSidebarProps): ReactElement {
   return (
     <div className="hidden md:flex md:flex-shrink-0">
-      <div className="flex flex-col w-18">
+      <div className="flex flex-col w-[5rem]">
         <div className="flex flex-col h-0 flex-1 bg-white dark:bg-dark-900 shadow-[2px_0_8px_-1px_rgba(0,0,0,0.15)] dark:shadow-none">
           <div className="flex-1 flex flex-col overflow-y-auto">
             <SidebarNavigation 
