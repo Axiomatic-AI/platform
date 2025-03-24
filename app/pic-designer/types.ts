@@ -1,11 +1,18 @@
-import { PicDesignerThread } from '@prisma/client';
 
 export interface PicDesignerQuery {
   content: string;
   code?: string;
   error?: string;
+  executionResult?: {
+    base64Image: string;
+    error?: string;
+  };
 }
 
-export type ThreadWithQueries = PicDesignerThread & {
+export interface ThreadWithQueries {
+  id: string;
+  title: string;
   queries: PicDesignerQuery[];
-};
+  createdAt: Date;
+  updatedAt: Date;
+}

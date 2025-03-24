@@ -2,15 +2,21 @@ import { ErrorMessage } from './ErrorMessage';
 import { CodeBlock } from './CodeBlock';
 import { Loading } from './Loading';
 import { ThreadWithQueries } from '../types';
+import { useExecuteGdsFactoryCode } from '../hooks/useExecuteGdsFactoryCode';
+import { useEffect, useState } from 'react';
+import { PicDisplay } from './PicDisplay';
 
 interface MessagesAreaProps {
-  thread?: ThreadWithQueries;
+  thread: ThreadWithQueries | undefined;
   isLoading: boolean;
   currentQueryIndex: number;
   setCurrentQueryIndex: (index: number) => void;
 }
 
 export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQueryIndex }: MessagesAreaProps) {
+  const { mutateAsync: executeCode } = useExecuteGdsFactoryCode();
+  const [isExecuting, setIsExecuting] = useState(false);
+
   if (isLoading && !thread) {
     // If we are loading and there is no thread, we are in a new thread
     // Otherwise, we are in an existing thread and should show the thread
@@ -22,7 +28,7 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
   }
 
   if (!thread) {
-    throw new Error("No thread provided.");
+    return null;
   }
 
   const goBack = () => {
@@ -33,8 +39,35 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
     setCurrentQueryIndex(Math.min(thread.queries.length - 1, currentQueryIndex + 1));
   };
 
-  const currentQuery = thread.queries[Math.min(currentQueryIndex, thread.queries.length - 1)];
+  const currentQuery = thread.queries[currentQueryIndex];
   const isCurrentQueryLoading = isLoading && (currentQuery.code === undefined && currentQuery.error === undefined);
+
+  useEffect(() => {
+    const executeCurrentQuery = async () => {
+      if (currentQuery.code && !currentQuery.executionResult) {
+        setIsExecuting(true);
+        try {
+          const result = await executeCode({ code: currentQuery.code });
+          thread.queries[currentQueryIndex] = {
+            ...currentQuery,
+            executionResult: result
+          };
+        } catch (error) {
+          thread.queries[currentQueryIndex] = {
+            ...currentQuery,
+            executionResult: {
+              base64Image: '',
+              error: 'Failed to execute code'
+            }
+          };
+        } finally {
+          setIsExecuting(false);
+        }
+      }
+    };
+
+    executeCurrentQuery();
+  }, [currentQuery.code, currentQueryIndex, executeCode, thread.queries]);
 
   return (
     <div className="h-full flex flex-col p">
@@ -85,6 +118,16 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
                 <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Response:</div>
                 <CodeBlock code={currentQuery.code} />
               </div>
+              {currentQuery.executionResult && (
+                <div className="w-full">
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Result:</div>
+                  <PicDisplay 
+                    base64Image={currentQuery.executionResult.base64Image}
+                    error={currentQuery.executionResult.error}
+                    isLoading={isExecuting}
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>
