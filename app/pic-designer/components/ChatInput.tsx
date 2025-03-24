@@ -49,7 +49,7 @@ export function ChatInput({ onSendMessage, isLoading, placeholder = 'Describe yo
   };
 
   return (
-    <div className="w-full mx-auto">
+    <div className="w-full">
       <div className="rounded-lg bg-white dark:border-none border border-gray-200 dark:bg-gray-700 shadow-sm">
         <textarea 
           className="p-2 block resize-none w-full text-sm text-gray-900 bg-transparent dark:placeholder-gray-400 dark:text-white focus:outline-none" 

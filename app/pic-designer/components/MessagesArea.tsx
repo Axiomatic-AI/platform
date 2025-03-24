@@ -21,7 +21,7 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
     // If we are loading and there is no thread, we are in a new thread
     // Otherwise, we are in an existing thread and should show the thread
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center h-full max-w-4xl mx-auto">
         <Loading />
       </div>
     );
@@ -103,9 +103,9 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
       </div>
 
       <div className="flex-1 overflow-y-auto mt-4">
-        <div className="max-w-4xl mx-auto w-full h-full p-4">
-          {isCurrentQueryLoading && <Loading />}
-          {currentQuery.error && <ErrorMessage />}
+        <div className="mx-auto w-full h-full p-4">
+          {isCurrentQueryLoading && (<div className="flex items-center justify-center h-full max-w-4xl mx-auto"><Loading /></div>)}
+          {currentQuery.error && (<ErrorMessage />)}
           {currentQuery.code && (
             <div className="flex flex-col items-center justify-center min-h-[300px] space-y-6">
               <div className="w-full">
@@ -114,20 +114,20 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
                   <div className="text-gray-900 dark:text-gray-100">{currentQuery.content}</div>
                 </div>
               </div>
-              <div className="w-full">
-                <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Response:</div>
-                <CodeBlock code={currentQuery.code} />
-              </div>
-              {currentQuery.executionResult && (
-                <div className="w-full">
+              <div className="w-full grid grid-cols-2 gap-6">
+                <div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Response:</div>
+                  <CodeBlock code={currentQuery.code} />
+                </div>
+                <div>
                   <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Result:</div>
                   <PicDisplay 
-                    base64Image={currentQuery.executionResult.base64Image}
-                    error={currentQuery.executionResult.error}
+                    base64Image={currentQuery.executionResult?.base64Image}
+                    error={currentQuery.executionResult?.error}
                     isLoading={isExecuting}
                   />
                 </div>
-              )}
+              </div>
             </div>
           )}
         </div>
