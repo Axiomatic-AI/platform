@@ -1,6 +1,6 @@
 
 export interface PicDesignerQuery {
-  content: string;
+  content?: string;
   code?: string;
   error?: string;
   executionResult?: {
