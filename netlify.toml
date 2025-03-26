@@ -5,3 +5,6 @@
   targetPort = 3000
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+[dev]
+  port = "8888"
+
