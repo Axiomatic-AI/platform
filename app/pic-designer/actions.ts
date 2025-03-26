@@ -3,17 +3,20 @@
 import { auth0 } from '@lib/auth0';
 import { prisma } from '@lib/prisma';
 import { ThreadWithQueries } from './types';
+import { ThreadType } from '@prisma/client';
 
-export async function createThread(title: string): Promise<ThreadWithQueries> {
+export async function createThread(title: string, type: ThreadType = ThreadType.PIC): Promise<ThreadWithQueries> {
   const session = await auth0.getSession();
   if (!session?.user?.sub) {
     throw new Error('Unauthorized');
   }
+  
 
   return prisma.thread.create({
     data: {
       userId: session.user.sub,
       title,
+      type,
       queries: [],
     },
   }) as Promise<ThreadWithQueries>;
