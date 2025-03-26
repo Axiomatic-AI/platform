@@ -30,11 +30,11 @@ describe('Pic Designer Actions', () => {
   describe('createThread', () => {
     it('should create a new thread', async () => {
       const title = 'New Thread';
-      (prisma.picDesignerThread.create as jest.Mock).mockResolvedValue(mockThread);
+      (prisma.thread.create as jest.Mock).mockResolvedValue(mockThread);
 
       const result = await createThread(title);
 
-      expect(prisma.picDesignerThread.create).toHaveBeenCalledWith({
+      expect(prisma.thread.create).toHaveBeenCalledWith({
         data: {
           userId: mockUser.sub,
           title,
@@ -54,11 +54,11 @@ describe('Pic Designer Actions', () => {
   describe('getThreads', () => {
     it('should return all threads for the user', async () => {
       const mockThreads = [mockThread];
-      (prisma.picDesignerThread.findMany as jest.Mock).mockResolvedValue(mockThreads);
+      (prisma.thread.findMany as jest.Mock).mockResolvedValue(mockThreads);
 
       const result = await getThreads();
 
-      expect(prisma.picDesignerThread.findMany).toHaveBeenCalledWith({
+      expect(prisma.thread.findMany).toHaveBeenCalledWith({
         where: { userId: mockUser.sub },
         orderBy: { createdAt: 'desc' },
       });
@@ -74,11 +74,11 @@ describe('Pic Designer Actions', () => {
 
   describe('getThread', () => {
     it('should return a specific thread', async () => {
-      (prisma.picDesignerThread.findUnique as jest.Mock).mockResolvedValue(mockThread);
+      (prisma.thread.findUnique as jest.Mock).mockResolvedValue(mockThread);
 
       const result = await getThread('test-thread-id');
 
-      expect(prisma.picDesignerThread.findUnique).toHaveBeenCalledWith({
+      expect(prisma.thread.findUnique).toHaveBeenCalledWith({
         where: {
           id: 'test-thread-id',
           userId: mockUser.sub,
@@ -88,7 +88,7 @@ describe('Pic Designer Actions', () => {
     });
 
     it('should return null if thread not found', async () => {
-      (prisma.picDesignerThread.findUnique as jest.Mock).mockResolvedValue(null);
+      (prisma.thread.findUnique as jest.Mock).mockResolvedValue(null);
 
       const result = await getThread('non-existent-id');
 
@@ -107,8 +107,8 @@ describe('Pic Designer Actions', () => {
         ...mockThread,
         queries: [query],
       };
-      (prisma.picDesignerThread.findUnique as jest.Mock).mockResolvedValue(mockThread);
-      (prisma.picDesignerThread.update as jest.Mock).mockResolvedValue(updatedThread);
+      (prisma.thread.findUnique as jest.Mock).mockResolvedValue(mockThread);
+      (prisma.thread.update as jest.Mock).mockResolvedValue(updatedThread);
 
       const result = await postQueryToThread({
         threadId: 'test-thread-id',
@@ -116,7 +116,7 @@ describe('Pic Designer Actions', () => {
         code: query.code,
       });
 
-      expect(prisma.picDesignerThread.update).toHaveBeenCalledWith({
+      expect(prisma.thread.update).toHaveBeenCalledWith({
         where: { id: 'test-thread-id' },
         data: {
           queries: [query],
@@ -126,7 +126,7 @@ describe('Pic Designer Actions', () => {
     });
 
     it('should throw error if thread not found', async () => {
-      (prisma.picDesignerThread.findUnique as jest.Mock).mockResolvedValue(null);
+      (prisma.thread.findUnique as jest.Mock).mockResolvedValue(null);
 
       await expect(
         postQueryToThread({
@@ -141,7 +141,7 @@ describe('Pic Designer Actions', () => {
     it('should delete a thread', async () => {
       await deleteThread('test-thread-id');
 
-      expect(prisma.picDesignerThread.delete).toHaveBeenCalledWith({
+      expect(prisma.thread.delete).toHaveBeenCalledWith({
         where: {
           id: 'test-thread-id',
           userId: mockUser.sub,
@@ -154,7 +154,7 @@ describe('Pic Designer Actions', () => {
     it('should delete all threads for the user', async () => {
       await deleteAllThreads();
 
-      expect(prisma.picDesignerThread.deleteMany).toHaveBeenCalledWith({
+      expect(prisma.thread.deleteMany).toHaveBeenCalledWith({
         where: {
           userId: mockUser.sub,
         },

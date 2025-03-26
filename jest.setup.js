@@ -10,7 +10,7 @@ jest.mock('@lib/auth0', () => ({
 // Mock prisma
 jest.mock('@lib/prisma', () => ({
   prisma: {
-    picDesignerThread: {
+    thread: {
       create: jest.fn(),
       findMany: jest.fn(),
       findUnique: jest.fn(),

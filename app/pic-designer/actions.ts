@@ -10,7 +10,7 @@ export async function createThread(title: string): Promise<ThreadWithQueries> {
     throw new Error('Unauthorized');
   }
 
-  return prisma.picDesignerThread.create({
+  return prisma.thread.create({
     data: {
       userId: session.user.sub,
       title,
@@ -25,7 +25,7 @@ export async function getThreads(): Promise<ThreadWithQueries[]> {
     throw new Error('Unauthorized');
   }
 
-  return prisma.picDesignerThread.findMany({
+  return prisma.thread.findMany({
     where: {
       userId: session.user.sub,
     },
@@ -41,7 +41,7 @@ export async function getThread(threadId: string): Promise<ThreadWithQueries | n
     throw new Error('Unauthorized');
   }
 
-  return prisma.picDesignerThread.findUnique({
+  return prisma.thread.findUnique({
     where: {
       id: threadId,
       userId: session.user.sub,
@@ -55,7 +55,7 @@ export async function postQueryToThread({ threadId, content, code, error }: { th
     throw new Error('Unauthorized');
   }
 
-  const thread = await prisma.picDesignerThread.findUnique({
+  const thread = await prisma.thread.findUnique({
     where: {
       id: threadId,
       userId: session.user.sub,
@@ -67,7 +67,7 @@ export async function postQueryToThread({ threadId, content, code, error }: { th
   }
 
   const existingQueries = thread.queries as { content: string; code: string | undefined, error: string | undefined }[];
-  return prisma.picDesignerThread.update({
+  return prisma.thread.update({
     where: { id: threadId },
     data: {
       queries: [
@@ -84,7 +84,7 @@ export async function deleteThread(threadId: string) {
     throw new Error('Unauthorized');
   }
 
-  await prisma.picDesignerThread.delete({
+  await prisma.thread.delete({
     where: {
       id: threadId,
       userId: session.user.sub,
@@ -98,7 +98,7 @@ export async function deleteAllThreads() {
     throw new Error('Unauthorized');
   }
 
-  await prisma.picDesignerThread.deleteMany({
+  await prisma.thread.deleteMany({
     where: {
       userId: session.user.sub,
     },

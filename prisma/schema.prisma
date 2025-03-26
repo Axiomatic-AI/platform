@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model PicDesignerThread {
+model Thread {
   id          String   @id @default(cuid())
   userId      String    
   title       String
