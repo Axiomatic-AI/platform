@@ -3,11 +3,12 @@
 import { ChatInput } from './components/ChatInput';
 import { MessagesArea } from './components/MessagesArea';
 import { HistorySidebar } from './components/HistorySidebar';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useGetThreadList } from './hooks/useGetThreadList';
 import { usePostQuery } from './hooks/usePostQuery';
 import { ThreadWithQueries, PicDesignerQuery } from './types';
 import { useDeleteAllThreads } from './hooks/useDeleteAllThreads';
+import { ThreadType } from '@prisma/client';
 
 
 export default function PICDesigner() {
@@ -59,6 +60,22 @@ export default function PICDesigner() {
     }
   }, [thread]);
 
+  const placeholder = useMemo(() => {
+    if (!thread) {
+      return "Describe your PIC circuit requirements or upload a document";
+    }
+
+    if (thread.type === ThreadType.PIC) {
+      return "Refine your design...";
+    }
+
+    if (thread.type === ThreadType.document) {
+      return "Ask questions about the document...";
+    }
+
+    return "Ask me a question";
+  }, [thread]);
+
   return (
     <div className="flex h-full w-full">
       <div className="flex-0 flex flex-col">
@@ -88,16 +105,16 @@ export default function PICDesigner() {
               <MessagesArea thread={thread} isLoading={isPostQueryLoading} currentQueryIndex={currentQueryIndex} setCurrentQueryIndex={setCurrentQueryIndex} />
             </div>
             <div className="flex-none p-4">
-              <ChatInput onSendMessage={onSendMessage} isLoading={isPostQueryLoading} placeholder="Refine your design..." />
+              <ChatInput onSendMessage={onSendMessage} isLoading={isPostQueryLoading} placeholder={placeholder} />
             </div>
           </div>
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <div className="mx-auto w-full px-4 max-w-4xl">
               <h1 className="font-bold text-gray-800 dark:text-white mb-2">
-                What PIC would you like to build today?
+                What would you like to do?
               </h1>
-              <ChatInput onSendMessage={onSendMessage} isLoading={isPostQueryLoading} />
+              <ChatInput onSendMessage={onSendMessage} isLoading={isPostQueryLoading} placeholder={placeholder} />
             </div>
           </div>
         )}
