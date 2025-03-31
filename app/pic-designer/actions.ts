@@ -16,7 +16,11 @@ export async function createThread(title: string, type: ThreadType = ThreadType.
     data: {
       userId: session.user.sub,
       title,
+<<<<<<< Updated upstream
       type,
+=======
+      type: 'PIC',
+>>>>>>> Stashed changes
       queries: [],
     },
   }) as Promise<ThreadWithQueries>;

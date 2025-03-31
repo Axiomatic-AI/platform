@@ -18,6 +18,7 @@ describe('Pic Designer Actions', () => {
     id: 'test-thread-id',
     userId: 'test-user-id',
     title: 'Test Thread',
+    type: 'PIC',
     queries: [],
     createdAt: new Date(),
   };
