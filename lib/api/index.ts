@@ -16,6 +16,11 @@ export class ApiClient {
       method: 'POST',
       headers,
       body: options?.isFormData ? data as FormData : JSON.stringify(data),
+      credentials: 'include',
+      mode: 'cors',
+      cache: 'no-cache',
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
     });
 
     if (!response.ok) {
