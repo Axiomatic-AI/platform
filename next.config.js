@@ -23,9 +23,14 @@ const nextConfig = {
       },
     ];
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '500mb',
+    },
+  },
   api: {
     bodyParser: {
-      sizeLimit: '100mb',
+      sizeLimit: '500mb',
     },
   },
 };

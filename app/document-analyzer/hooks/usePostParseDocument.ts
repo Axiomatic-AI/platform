@@ -5,7 +5,7 @@ import { Document } from '@prisma/client';
 
 interface ParseDocumentResponse {
   markdown: string;
-  images: string[];
+  images: Record<string, string>;
   interline_equations: string[];
   inline_equations: string[];
 }
@@ -30,24 +30,40 @@ export function usePostParseDocument(): UseMutationResult<Document, Error, Parse
         throw new Error('No response received from the server');
       }
 
-      if (!response.markdown || !Array.isArray(response.images) || 
-          !Array.isArray(response.interline_equations) || !Array.isArray(response.inline_equations)) {
-        throw new Error('Invalid response format from the server');
+      console.log('Parse response:', response);
+
+      // Validate the response structure
+      if (!response.markdown) {
+        throw new Error('Invalid response format: markdown is required');
       }
 
-      const document = await createDocument({
-        title: file.name,
-        markdown: response.markdown,
-        images: response.images,
-        interlineEquations: response.interline_equations,
-        inlineEquations: response.inline_equations,
-      });
-
-      if (!document) {
-        throw new Error('Failed to create document in database');
+      // Ensure images is an object
+      if (!response.images || typeof response.images !== 'object') {
+        response.images = {};
       }
 
-      return document;
+      // Ensure arrays are arrays
+      const interlineEquations = Array.isArray(response.interline_equations) ? response.interline_equations : [];
+      const inlineEquations = Array.isArray(response.inline_equations) ? response.inline_equations : [];
+
+      try {
+        const document = await createDocument({
+          title: file.name,
+          markdown: response.markdown,
+          images: response.images,
+          interlineEquations,
+          inlineEquations,
+        });
+
+        if (!document) {
+          throw new Error('Failed to create document in database');
+        }
+
+        return document;
+      } catch (error) {
+        console.error('Error creating document:', error);
+        throw error;
+      }
     },
     onMutate: async ({ file }) => {
       await queryClient.cancelQueries({ queryKey: ['documents'] });
@@ -60,12 +76,12 @@ export function usePostParseDocument(): UseMutationResult<Document, Error, Parse
         userId: 'temp', // This will be replaced with the actual user ID when the document is created
         title: file.name,
         markdown: '',
-        images: [],
+        images: {},
         interlineEquations: [],
         inlineEquations: [],
         createdAt: new Date(),
         updatedAt: new Date(),
-      } as Document;
+      } as unknown as Document;
 
       queryClient.setQueryData<Document[]>(['documents'], (old) => {
         if (!old) return [optimisticDocument];

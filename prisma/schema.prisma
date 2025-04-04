@@ -36,9 +36,9 @@ model Document {
   userId              String
   title               String
   markdown            String
-  images              String[]     @default([])
-  interlineEquations  String[]     @default([])
-  inlineEquations     String[]     @default([])
+  images              Json     @default("{}")
+  interlineEquations  String[] @default([])
+  inlineEquations     String[] @default([])
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 

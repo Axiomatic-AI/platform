@@ -24,10 +24,22 @@ export class ApiClient {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to make POST request to ${path}`);
+      const errorText = await response.text();
+      throw new Error(`Failed to make POST request to ${path}: ${errorText}`);
     }
 
-    return response.json();
+    try {
+      const responseData = await response.json();
+      if (!responseData) {
+        throw new Error('Empty response from server');
+      }
+      return responseData;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to parse response: ${error.message}`);
+      }
+      throw new Error('Failed to parse response: Unknown error');
+    }
   }
 }
 

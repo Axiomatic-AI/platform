@@ -14,7 +14,7 @@ export interface DocumentQuery {
   markdown: string;
   interline_equations: string[];
   inline_equations: string[];
-  images: any[];
+  images: Record<string, string>;
   error?: string;
 }
 

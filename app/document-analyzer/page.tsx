@@ -9,11 +9,14 @@ import { Result } from './components/Result'
 import { HistorySidebar } from './components/HistorySidebar'
 import { getDocument } from './actions'
 import { useGetDocuments } from './hooks/useGetDocuments'
+import { Document } from '@prisma/client'
+
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
 export default function DocumentAnalyzerPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [file, setFile] = useState<File | null>(null)
-  const [currentDocument, setCurrentDocument] = useState<any>(null)
+  const [currentDocument, setCurrentDocument] = useState<Document | null>(null)
   const { data: documents, isLoading: isLoadingDocuments } = useGetDocuments()
   const { mutateAsync: postParseDocument, isPending: isLoading, error } = usePostParseDocument()
 
@@ -32,19 +35,29 @@ export default function DocumentAnalyzerPage() {
     setIsDragging(false)
     
     const droppedFile = e.dataTransfer.files[0]
-    if (droppedFile && droppedFile.type === 'application/pdf') {
+    if (droppedFile) {
+      if (droppedFile.type !== 'application/pdf') {
+        alert('Please upload a PDF file')
+        return
+      }
+      if (droppedFile.size > MAX_FILE_SIZE) {
+        alert('File size must be less than 100MB')
+        return
+      }
       setFile(droppedFile)
-    } else {
-      alert('Please upload a PDF file')
     }
   }, [])
 
   const handleFileSelect = useCallback((selectedFile: File) => {
-    if (selectedFile.type === 'application/pdf') {
-      setFile(selectedFile)
-    } else {
+    if (selectedFile.type !== 'application/pdf') {
       alert('Please upload a PDF file')
+      return
     }
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      alert('File size must be less than 100MB')
+      return
+    }
+    setFile(selectedFile)
   }, [])
 
   const handleAnalyze = useCallback(async () => {
@@ -54,15 +67,8 @@ export default function DocumentAnalyzerPage() {
     }
   }, [file, postParseDocument])
 
-  const handleDocumentSelect = useCallback(async (documentId: string) => {
-    try {
-      const document = await getDocument(documentId)
-      if (document) {
-        setCurrentDocument(document)
-      }
-    } catch (error) {
-      console.error('Failed to fetch document:', error)
-    }
+  const handleDocumentSelect = useCallback((document: Document) => {
+    setCurrentDocument(document)
   }, [])
 
   return (
@@ -106,7 +112,7 @@ export default function DocumentAnalyzerPage() {
         <div className="flex-1 h-full overflow-y-scroll">
           <Result 
             markdown={currentDocument.markdown} 
-            images={currentDocument.images} 
+            images={currentDocument.images as Record<string, string>} 
             interline_equations={currentDocument.interlineEquations} 
             inline_equations={currentDocument.inlineEquations} 
           />
