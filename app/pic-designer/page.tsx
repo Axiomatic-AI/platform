@@ -74,7 +74,7 @@ export default function PICDesigner() {
 
   const placeholder = useMemo(() => {
     if (!thread) {
-      return "Describe your PIC circuit requirements or upload a document";
+      return "Describe your PIC circuit requirements";
     }
 
     if (thread.type === ThreadType.PIC) {
