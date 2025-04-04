@@ -2,7 +2,7 @@
 
 import { auth0 } from '@lib/auth0';
 import { prisma } from '@lib/prisma';
-import { ThreadWithQueries } from './types';
+import { ThreadQuery, ThreadWithQueries } from './types';
 import { ThreadType } from '@prisma/client';
 
 export async function createThread(title: string, type: ThreadType = ThreadType.PIC): Promise<ThreadWithQueries> {
@@ -56,7 +56,7 @@ export async function getThread(threadId: string): Promise<ThreadWithQueries | n
   }) as Promise<ThreadWithQueries | null>;
 }
 
-export async function postQueryToThread({ threadId, content, code, error }: { threadId: string, content: string, code?: string, error?: string }): Promise<ThreadWithQueries> {
+export async function postQueryToThread(threadId: string, query: ThreadQuery): Promise<ThreadWithQueries> {
   const session = await auth0.getSession();
   if (!session?.user?.sub) {
     throw new Error('Unauthorized');
@@ -73,13 +73,14 @@ export async function postQueryToThread({ threadId, content, code, error }: { th
     throw new Error('Thread not found');
   }
 
-  const existingQueries = thread.queries as { content: string; code: string | undefined, error: string | undefined }[];
+  const existingQueries = thread.queries as any; // TODO: fix this
+
   return prisma.thread.update({
     where: { id: threadId },
     data: {
       queries: [
         ...existingQueries,
-        { content, code, error },
+        query,
       ],
     },
   }) as Promise<ThreadWithQueries>;

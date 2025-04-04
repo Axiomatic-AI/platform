@@ -133,7 +133,7 @@ export function ChatInput({
               ref={fileInputRef}
               className="hidden"
               onChange={handleFileSelect}
-              accept=".txt,.json,.csv"
+              accept=".pdf"
             />
             {attachedFile && (
               <div className="flex items-center gap-1 text-sm text-gray-500">

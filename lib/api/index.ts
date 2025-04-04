@@ -5,13 +5,17 @@ export class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  async post<T>(path: string, data: unknown): Promise<T> {
+  async post<T>(path: string, data: unknown, options?: { isFormData?: boolean }): Promise<T> {
+    const headers: Record<string, string> = {};
+    
+    if (!options?.isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(`${this.baseUrl}${path}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+      headers,
+      body: options?.isFormData ? data as FormData : JSON.stringify(data),
     });
 
     if (!response.ok) {

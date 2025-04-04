@@ -5,7 +5,8 @@ import { MessagesArea } from './components/MessagesArea';
 import { HistorySidebar } from './components/HistorySidebar';
 import { useEffect, useMemo, useState } from 'react';
 import { useGetThreadList } from './hooks/useGetThreadList';
-import { usePostQuery } from './hooks/usePostQuery';
+import { usePostPicQuery } from './hooks/usePostQuery';
+import { usePostFile } from './hooks/usePostFile';
 import { ThreadWithQueries, PicDesignerQuery } from './types';
 import { useDeleteAllThreads } from './hooks/useDeleteAllThreads';
 import { ThreadType } from '@prisma/client';
@@ -16,8 +17,9 @@ export default function PICDesigner() {
   const [currentQueryIndex, setCurrentQueryIndex] = useState<number>(0);
 
   const { data: threadList, isLoading: isThreadListLoading } = useGetThreadList();
-  const { mutateAsync: postQuery, isPending: isPostQueryLoading } = usePostQuery();
+  const { mutateAsync: postQuery, isPending: isPostQueryLoading } = usePostPicQuery();
   const { mutateAsync: deleteAllThreads, isPending: isDeletingThreads } = useDeleteAllThreads();
+  const { mutateAsync: postFile, isPending: isPostFileLoading } = usePostFile();
 
   const thread = threadList?.find(thread => thread.id === currentThreadId);
 
@@ -52,6 +54,16 @@ export default function PICDesigner() {
     const previousCode = getPreviousCode();
     const thread = await postQuery({ threadId: currentThreadId, content, previousCode });
     setCurrentThreadId(thread.id);
+  };
+
+  const onFileAttach = async (file: File) => {
+    try {
+      const thread = await postFile({ threadId: currentThreadId, file });
+      setCurrentThreadId(thread.id);
+    } catch (error) {
+      console.error('Failed to analyze document:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
   useEffect(() => {
@@ -89,7 +101,7 @@ export default function PICDesigner() {
         />
       </div>
       <button
-          disabled={isPostQueryLoading}
+          disabled={isPostQueryLoading || isPostFileLoading}
           onClick={handleNewThread}
           className="m-4 w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           title="New Thread"
@@ -99,13 +111,18 @@ export default function PICDesigner() {
           </svg>
         </button>
       <div className="flex-1 flex flex-col h-full">
-        {thread || isPostQueryLoading ? (
+        {thread || isPostQueryLoading || isPostFileLoading ? (
           <div className="flex-1 min-h-0 flex flex-col">
             <div className="flex-1 overflow-y-auto">
-              <MessagesArea thread={thread} isLoading={isPostQueryLoading} currentQueryIndex={currentQueryIndex} setCurrentQueryIndex={setCurrentQueryIndex} />
+              <MessagesArea thread={thread} isLoading={isPostQueryLoading || isPostFileLoading} currentQueryIndex={currentQueryIndex} setCurrentQueryIndex={setCurrentQueryIndex} />
             </div>
             <div className="flex-none p-4">
-              <ChatInput onSendMessage={onSendMessage} isLoading={isPostQueryLoading} placeholder={placeholder} />
+              <ChatInput 
+                onSendMessage={onSendMessage} 
+                isLoading={isPostQueryLoading || isPostFileLoading} 
+                placeholder={placeholder}
+                onFileAttach={onFileAttach}
+              />
             </div>
           </div>
         ) : (
@@ -114,7 +131,12 @@ export default function PICDesigner() {
               <h1 className="font-bold text-gray-800 dark:text-white mb-2">
                 What would you like to do?
               </h1>
-              <ChatInput onSendMessage={onSendMessage} isLoading={isPostQueryLoading} placeholder={placeholder} />
+              <ChatInput 
+                onSendMessage={onSendMessage} 
+                isLoading={isPostQueryLoading || isPostFileLoading} 
+                placeholder={placeholder}
+                onFileAttach={onFileAttach}
+              />
             </div>
           </div>
         )}
