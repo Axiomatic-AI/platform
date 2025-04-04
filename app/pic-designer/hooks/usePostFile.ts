@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient, UseMutationResult } from '@tanstack/react-query';
 import { postQueryToThread, createThread } from '../actions';
 import { usePostPicDesigner } from './usePostPicDesigner';
-import { usePostParseDocument } from './usePostParseDocument';
+import { usePostParseDocument } from '../../document-analyzer/hooks/usePostParseDocument';
 import { PicDesignerQuery, ThreadWithQueries } from '../types';
 import { ThreadType } from '@prisma/client';
 
