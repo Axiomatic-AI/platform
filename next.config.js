@@ -15,6 +15,14 @@ const nextConfig = {
       },
     ],
   },
+  rewrites: async () => {
+    return [
+      {
+        source: '/backend-api/:path*',
+        destination: 'https://api.axiomatic-ai.com/:path*',
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

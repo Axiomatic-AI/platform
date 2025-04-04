@@ -2,12 +2,16 @@ import type { Config } from 'tailwindcss'
 
 const config: Config = {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   darkMode: 'class',
   theme: {
     extend: {
+      animation: {
+        'spin': 'spin 1s linear infinite',
+        'spin-slow': 'spin 2s linear infinite',
+      },
       colors: {
         primary: {
           50: '#f0fbe8',

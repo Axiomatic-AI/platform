@@ -2,26 +2,43 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { auth0 } from 'lib/auth0';
 
-export async function middleware(request: NextRequest) {
-  const authRes = await auth0.middleware(request)
+const getApiKey = () => {
+  if (!process.env.AXIOMATIC_API_KEY) {
+    throw new Error('AXIOMATIC_API_KEY is not set');
+  }
+  return process.env.AXIOMATIC_API_KEY;
+};
 
-  // authentication routes — let the middleware handle it
-  if (request.nextUrl.pathname.startsWith("/auth")) {
-    return authRes
+export async function middleware(request: NextRequest) {
+  // Handle API requests with authorization header
+  if (request.nextUrl.pathname.startsWith('/backend-api')) {
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set('X-Api-Key', getApiKey());
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   }
 
-  const { origin } = new URL(request.url)
-  const session = await auth0.getSession()
+  // Handle authentication routes
+  if (request.nextUrl.pathname.startsWith("/auth")) {
+    return auth0.middleware(request);
+  }
+
+  const { origin } = new URL(request.url);
+  const session = await auth0.getSession();
 
   // user does not have a session — redirect to login
   if (!session) {
-    return NextResponse.redirect(`${origin}/auth/login`)
+    return NextResponse.redirect(`${origin}/auth/login`);
   }
 
-  return authRes
+  return auth0.middleware(request);
 }
+
 export const config = {
-  matcher: [
+  matcher: 
     /*
      * Match all request paths except for the ones starting with:
      * - api/auth (auth endpoints)
@@ -32,5 +49,4 @@ export const config = {
      * - static (public static files)
      */
     '/((?!api/auth|_next/static|_next/image|favicon.ico|images|static).*)',
-  ],
 };

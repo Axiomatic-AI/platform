@@ -3,51 +3,23 @@ import { usePathname } from 'next/navigation'
 import React, { SVGProps, ReactElement } from 'react'
 import AuthNav from './AuthNav'
 import HomeIcon from './icons/HomeIcon'
-import CogIcon from './icons/CogIcon'
-
+import CircuitIcon from './icons/CircuitIcon'
+import DocumentIcon from './icons/DocumentIcon'
+import { PlaygroundIcon} from './icons/PlaygroundIcon'
+import { SidebarNavigation } from './SidebarNavigation'
 interface NavigationItem {
   name: string;
   href: string;
   icon: (props: SVGProps<SVGSVGElement>) => ReactElement;
+  external?: boolean;
 }
 
 const navigationItems: NavigationItem[] = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
+  { name: 'PIC Designer', href: '/pic-designer', icon: CircuitIcon },
+  { name: 'Document Analyzer', href: '/document-analyzer', icon: DocumentIcon },
+  { name: 'Playground', href: 'https://playground.axiomatic-ai.com', icon: PlaygroundIcon, external: true },
 ]
-
-interface SidebarNavigationProps {
-  items: NavigationItem[];
-  pathname: string;
-  className?: string;
-}
-
-function SidebarNavigation({ items, pathname, className = '' }: SidebarNavigationProps): ReactElement {
-  return (
-    <nav className={`mt-5 px-2 space-y-1 ${className}`}>
-      {items.map((item) => (
-        <Link
-          key={item.name}
-          href={item.href}
-          className={`group flex items-center px-2 py-2 text-base font-medium rounded-md ${
-            pathname === item.href
-              ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
-              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
-          }`}
-        >
-          <item.icon
-            className={`mr-4 flex-shrink-0 h-6 w-6 ${
-              pathname === item.href
-                ? 'text-gray-900 dark:text-white'
-                : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white'
-            }`}
-            aria-hidden="true"
-          />
-          {item.name}
-        </Link>
-      ))}
-    </nav>
-  )
-}
 
 interface MobileSidebarProps {
   open: boolean;
@@ -68,39 +40,14 @@ function MobileSidebar({ open, setOpen, pathname }: MobileSidebarProps): ReactEl
       
       {/* Sidebar for mobile */}
       <div
-        className={`fixed inset-y-0 left-0 flex flex-col z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed inset-y-0 left-0 flex flex-col z-40 w-16 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out md:hidden ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
-      >
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
-          <span className="text-xl font-bold text-gray-900 dark:text-white">Platform</span>
-          <button
-            className="rounded-md p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-            onClick={() => setOpen(false)}
-          >
-            <span className="sr-only">Close sidebar</span>
-            <svg
-              className="h-6 w-6"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-        
-        <div className="flex-1 overflow-y-auto pb-4">
+      > 
+        <div className="flex-1 overflow-y-auto">
           <SidebarNavigation items={navigationItems} pathname={pathname} />
         </div>
-        <div className="flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700 p-4">
+        <div className="flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700">
           <AuthNav />
         </div>
       </div>
@@ -115,16 +62,16 @@ interface DesktopSidebarProps {
 function DesktopSidebar({ pathname }: DesktopSidebarProps): ReactElement {
   return (
     <div className="hidden md:flex md:flex-shrink-0">
-      <div className="flex flex-col w-64">
-        <div className="flex flex-col h-0 flex-1 border-r border-transparent dark:border-gray-700/0 bg-white dark:bg-dark-900">
-          <div className="flex-1 flex flex-col pb-4 overflow-y-auto">
+      <div className="flex flex-col w-[5rem]">
+        <div className="flex flex-col h-0 flex-1 bg-white dark:bg-dark-900 shadow-[2px_0_8px_-1px_rgba(0,0,0,0.15)] dark:shadow-none">
+          <div className="flex-1 flex flex-col overflow-y-auto">
             <SidebarNavigation 
               items={navigationItems} 
               pathname={pathname} 
-              className="mt-2 flex-1"
+              className="mt-2"
             />
           </div>
-          <div className="flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700 p-4">
+          <div className="flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700">
             <AuthNav />
           </div>
         </div>
