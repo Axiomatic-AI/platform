@@ -56,16 +56,6 @@ export default function PICDesigner() {
     setCurrentThreadId(thread.id);
   };
 
-  const onFileAttach = async (file: File) => {
-    try {
-      const thread = await postFile({ threadId: currentThreadId, file });
-      setCurrentThreadId(thread.id);
-    } catch (error) {
-      console.error('Failed to analyze document:', error);
-      // You might want to show an error message to the user here
-    }
-  };
-
   useEffect(() => {
     if(thread) {
       setCurrentQueryIndex(thread.queries.length - 1);
@@ -121,7 +111,6 @@ export default function PICDesigner() {
                 onSendMessage={onSendMessage} 
                 isLoading={isPostQueryLoading || isPostFileLoading} 
                 placeholder={placeholder}
-                onFileAttach={onFileAttach}
               />
             </div>
           </div>
@@ -135,7 +124,6 @@ export default function PICDesigner() {
                 onSendMessage={onSendMessage} 
                 isLoading={isPostQueryLoading || isPostFileLoading} 
                 placeholder={placeholder}
-                onFileAttach={onFileAttach}
               />
             </div>
           </div>
