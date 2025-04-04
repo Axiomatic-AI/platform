@@ -6,6 +6,7 @@ import { FileUpload } from './components/FileUpload'
 import { Error } from './components/Error'
 import { Loading } from './components/Loading'
 import { Result } from './components/Result'
+import { HistorySidebar } from './components/HistorySidebar'
 
 export default function DocumentAnalyzerPage() {
   const [isDragging, setIsDragging] = useState(false)
@@ -49,35 +50,52 @@ export default function DocumentAnalyzerPage() {
   }, [file, postParseDocument])
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-          <FileUpload
-            file={file}
-            isDragging={isDragging}
-            onFileSelect={handleFileSelect}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          />
-
-          {error && <Error message={error.message} />}
-
-          {file && (
-            <button
-              className="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={handleAnalyze}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Analyzing...' : 'Analyze Document'}
-            </button>
-          )}
-
-          {isLoading && <Loading />}
-
-          {result && <Result content={result.content} />}
-        </div>
+    <div className="flex h-full w-full">
+      <div className="flex-0 flex flex-col">
+        <HistorySidebar
+          documents={[]} // TODO: Add document history
+          currentDocumentId={undefined}
+          onDocumentSelect={() => {}}
+          isLoading={false}
+        />
       </div>
+      {!result ? (
+        <div className="flex-1 flex flex-col h-full items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-md mx-auto text-center">
+            <FileUpload
+              file={file}
+              isDragging={isDragging}
+              onFileSelect={handleFileSelect}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            />
+
+            {error && <Error message={error.message} />}
+
+            {file && (
+              <button
+                className="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleAnalyze}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Analyzing...' : 'Analyze Document'}
+              </button>
+            )}
+
+            {isLoading && <Loading />}
+          </div>
+        </div>
+      ) : (
+        <div className="flex-1 h-full overflow-y-scroll">
+          <Result 
+            markdown={result.markdown} 
+            images={result.images} 
+            interline_equations={result.interline_equations} 
+            inline_equations={result.inline_equations} 
+          />
+        </div>
+      )}
     </div>
   )
 } 

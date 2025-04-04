@@ -66,7 +66,7 @@ export function FileUpload({
             )}
           </div>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            PDF, DOC, DOCX, or TXT files
+            PDF files only
           </p>
         </label>
       </div>
