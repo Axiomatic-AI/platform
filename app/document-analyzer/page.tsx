@@ -27,13 +27,19 @@ export default function DocumentAnalyzerPage() {
     setIsDragging(false)
     
     const droppedFile = e.dataTransfer.files[0]
-    if (droppedFile) {
+    if (droppedFile && droppedFile.type === 'application/pdf') {
       setFile(droppedFile)
+    } else {
+      alert('Please upload a PDF file')
     }
   }, [])
 
   const handleFileSelect = useCallback((selectedFile: File) => {
-    setFile(selectedFile)
+    if (selectedFile.type === 'application/pdf') {
+      setFile(selectedFile)
+    } else {
+      alert('Please upload a PDF file')
+    }
   }, [])
 
   const handleAnalyze = useCallback(async () => {
