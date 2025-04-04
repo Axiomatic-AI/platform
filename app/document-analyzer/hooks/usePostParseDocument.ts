@@ -2,13 +2,10 @@ import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { getClient } from '../../../lib/api';
 
 interface ParseDocumentResponse {
-  content: string;
-  metadata: {
-    fileName: string;
-    fileType: string;
-    fileSize: number;
-    lastModified: Date;
-  };
+  markdown: string;
+  images: string[];
+  interline_equations: string[];
+  inline_equations: string[];
 }
 
 interface ParseDocumentProps {
