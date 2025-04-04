@@ -1,14 +1,18 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { getClient } from '../../../lib/api';
-import { ThreadType } from '@prisma/client';
-
-interface ParseDocumentProps {
-  file: File;
-}
 
 interface ParseDocumentResponse {
   content: string;
-  type: ThreadType;
+  metadata: {
+    fileName: string;
+    fileType: string;
+    fileSize: number;
+    lastModified: Date;
+  };
+}
+
+interface ParseDocumentProps {
+  file: File;
 }
 
 export function usePostParseDocument(): UseMutationResult<ParseDocumentResponse, Error, ParseDocumentProps> {
@@ -17,13 +21,11 @@ export function usePostParseDocument(): UseMutationResult<ParseDocumentResponse,
       const formData = new FormData();
       formData.append('file', file);
 
-      const data = await getClient().post<ParseDocumentResponse>('/document/parse', formData, { isFormData: true });
+      const response = await getClient().post<ParseDocumentResponse>('/document/parse', formData, {
+        isFormData: true
+      });
 
-      if (!data.content) {
-        throw new Error('No content returned from API');
-      }
-
-      return data;
+      return response;
     },
   });
 } 

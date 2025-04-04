@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useCallback } from 'react'
-import { useParseDocument } from '../../hooks/useParseDocument'
+import { usePostParseDocument } from './hooks/usePostParseDocument'
 import { FileUpload } from './components/FileUpload'
 import { Error } from './components/Error'
 import { Loading } from './components/Loading'
@@ -10,7 +10,7 @@ import { Result } from './components/Result'
 export default function DocumentAnalyzerPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [file, setFile] = useState<File | null>(null)
-  const { parseDocument, isLoading, error, result } = useParseDocument()
+  const { mutateAsync: postParseDocument, isPending: isLoading, error, data: result } = usePostParseDocument()
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -38,9 +38,9 @@ export default function DocumentAnalyzerPage() {
 
   const handleAnalyze = useCallback(async () => {
     if (file) {
-      await parseDocument(file)
+      await postParseDocument({ file })
     }
-  }, [file, parseDocument])
+  }, [file, postParseDocument])
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -55,7 +55,7 @@ export default function DocumentAnalyzerPage() {
             onDrop={handleDrop}
           />
 
-          {error && <Error message={error} />}
+          {error && <Error message={error.message} />}
 
           {file && (
             <button
