@@ -1,6 +1,6 @@
 import { ErrorMessage } from './ErrorMessage';
 import { CodeBlock } from './CodeBlock';
-import { Loading } from './Loading';
+import { Loading } from '../../../components/Loading';
 import { ThreadWithQueries } from '../types';
 import { useExecuteGdsFactoryCode } from '../hooks/useExecuteGdsFactoryCode';
 import { useEffect, useState } from 'react';

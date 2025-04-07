@@ -1,4 +1,28 @@
+import LZString from 'lz-string'
+
 export const MAX_DOCUMENT_SIZE = 10 * 1024 * 1024 // 10 MiB in bytes
+export const MAX_IMAGE_SIZE = 1024 // Maximum width/height for compressed images
+export const IMAGE_QUALITY = 80 // JPEG quality (0-100)
+
+export async function compressImage(base64Image: string): Promise<string> {
+  try {
+    // Compress the base64 string using LZString
+    return LZString.compressToBase64(base64Image)
+  } catch (error) {
+    console.error('Error compressing image:', error)
+    throw new Error('Failed to compress image')
+  }
+}
+
+export async function decompressImage(compressedImage: string): Promise<string> {
+  try {
+    // Decompress the base64 string using LZString
+    return LZString.decompressFromBase64(compressedImage)
+  } catch (error) {
+    console.error('Error decompressing image:', error)
+    throw new Error('Failed to decompress image')
+  }
+}
 
 export function calculateDocumentSize({
   markdown,
