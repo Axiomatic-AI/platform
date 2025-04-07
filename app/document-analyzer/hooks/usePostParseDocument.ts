@@ -30,8 +30,6 @@ export function usePostParseDocument(): UseMutationResult<Document, Error, Parse
         throw new Error('No response received from the server');
       }
 
-      console.log('Parse response:', response);
-
       // Validate the response structure
       if (!response.markdown) {
         throw new Error('Invalid response format: markdown is required');
