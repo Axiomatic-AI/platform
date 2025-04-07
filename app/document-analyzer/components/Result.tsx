@@ -53,15 +53,20 @@ export function Result({ markdown, images, interline_equations, inline_equations
       );
     },
     img: ({ src, alt, ...props }) => {
-      // If the src is a data URL, render it directly
       if (src?.startsWith('data:')) {
-        return <img src={src} alt={alt || ''} {...props} />;
+        return (
+          <div className="flex justify-center my-4">
+            <img src={src} alt={alt || ''} className="max-w-full h-auto" {...props} />
+          </div>
+        );
       }
-      // Otherwise, use the default img component
-      return <img src={src} alt={alt || ''} {...props} />;
+      return (
+        <div className="flex justify-center my-4">
+          <img src={src} alt={alt || ''} className="max-w-full h-auto" {...props} />
+        </div>
+      );
     },
     p: ({ children, ...props }) => {
-      // Check if the paragraph contains math
       const text = React.Children.toArray(children).join('');
       if (text.includes('$')) {
         return (
