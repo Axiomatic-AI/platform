@@ -2,6 +2,7 @@
 
 import { prisma } from '@lib/prisma'
 import { auth0 } from '@lib/auth0'
+import { calculateDocumentSize, validateDocumentSize } from './utils'
 
 export async function createDocument({
   title,
@@ -30,6 +31,14 @@ export async function createDocument({
 
     const validatedInterlineEquations = Array.isArray(interlineEquations) ? interlineEquations : []
     const validatedInlineEquations = Array.isArray(inlineEquations) ? inlineEquations : []
+
+    const totalSize = calculateDocumentSize({
+      markdown,
+      images,
+      interlineEquations: validatedInterlineEquations,
+      inlineEquations: validatedInlineEquations,
+    })
+    validateDocumentSize(totalSize)
 
     return await prisma.document.create({
       data: {
