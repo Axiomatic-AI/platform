@@ -10,6 +10,7 @@ import { HistorySidebar } from './components/HistorySidebar'
 import { getDocument } from './actions'
 import { useGetDocuments } from './hooks/useGetDocuments'
 import { Document } from '@prisma/client'
+import { PlusIcon } from '@heroicons/react/24/outline'
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
@@ -110,6 +111,17 @@ export default function DocumentAnalyzerPage() {
         </div>
       ) : (
         <div className="flex-1 h-full overflow-y-scroll">
+          <div className="fixed right-4 bottom-4 z-10">
+            <button
+              className="bg-primary-500 text-white p-3 rounded-full shadow-lg hover:bg-primary-600 transition-colors duration-200 flex items-center justify-center group relative"
+              onClick={() => setCurrentDocument(null)}
+            >
+              <PlusIcon className="h-6 w-6" />
+              <span className="absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                New document
+              </span>
+            </button>
+          </div>
           <Result 
             markdown={currentDocument.markdown} 
             images={currentDocument.images as Record<string, string>} 
