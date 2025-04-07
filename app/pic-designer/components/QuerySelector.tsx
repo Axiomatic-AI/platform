@@ -1,4 +1,5 @@
 import { ThreadWithQueries } from '../types';
+import { guardIsPicOrErrorQuery } from '../utils';
 
 interface QuerySelectorProps {
   thread: ThreadWithQueries;
@@ -26,9 +27,9 @@ export function QuerySelector({ thread, currentQueryIndex, onBack, onForward }: 
           Query {currentQueryIndex + 1} of {thread.queries.length}
         </h4>
         <h3 className="text-sm">
-          {currentQuery.content && currentQuery.content.length > 50 
+          {guardIsPicOrErrorQuery(currentQuery) && (currentQuery.content && currentQuery.content.length > 50 
             ? `${currentQuery.content.slice(0, 50)}...` 
-            : currentQuery.content}
+            : currentQuery.content)}
         </h3>
       </div>
       <button

@@ -6,7 +6,7 @@ import { useExecuteGdsFactoryCode } from '../hooks/useExecuteGdsFactoryCode';
 import { useEffect, useState } from 'react';
 import { PicDisplay } from './PicDisplay';
 import { QuerySelector } from './QuerySelector';
-
+import { guardIsPicOrErrorQuery, guardIsPicQuery } from '../utils';
 interface MessagesAreaProps {
   thread: ThreadWithQueries | undefined;
   isLoading: boolean;
@@ -41,10 +41,15 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
   };
 
   const currentQuery = thread.queries[currentQueryIndex];
-  const isCurrentQueryLoading = isLoading && (currentQuery.code === undefined && currentQuery.error === undefined);
+
+  const isCurrentQueryLoading = isLoading;
 
   useEffect(() => {
     const executeCurrentQuery = async () => {
+      if (!guardIsPicQuery(currentQuery)) {
+        return;
+      }
+
       if (currentQuery.code && !currentQuery.executionResult) {
         setIsExecuting(true);
         try {
@@ -68,7 +73,7 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
     };
 
     executeCurrentQuery();
-  }, [currentQuery.code, currentQueryIndex, executeCode, thread.queries]);
+  }, [currentQuery, currentQueryIndex, executeCode, thread.queries]);
 
   return (
     <div className="h-full flex flex-col p">
@@ -83,21 +88,25 @@ export function MessagesArea({ thread, isLoading, currentQueryIndex, setCurrentQ
         <div className="mx-auto w-full h-full p-4">
           {isCurrentQueryLoading && (<div className="flex items-center justify-center h-full max-w-4xl mx-auto"><Loading /></div>)}
           {currentQuery.error && (<ErrorMessage />)}
-          {currentQuery.code && (
+          {guardIsPicOrErrorQuery(currentQuery) && (
             <div className="flex flex-col items-center justify-center min-h-[300px] space-y-6">
               <div className="w-full grid grid-cols-2 gap-6 h-[calc(100vh-400px)]">
                 <div className="h-full overflow-hidden flex flex-col">
-                  <div className="flex-1 overflow-y-auto">
-                    <CodeBlock code={currentQuery.code} />
+                  {guardIsPicQuery(currentQuery) && currentQuery.code && ( 
+                    <div className="flex-1 overflow-y-auto">
+                      <CodeBlock code={currentQuery.code} />
+                    </div>
+                  )}
+                </div>
+                {guardIsPicQuery(currentQuery) && (
+                  <div className="h-full">
+                    <PicDisplay 
+                      base64Image={currentQuery.executionResult?.base64Image}
+                      error={currentQuery.executionResult?.error}
+                      isLoading={isExecuting}
+                    />
                   </div>
-                </div>
-                <div className="h-full">
-                  <PicDisplay 
-                    base64Image={currentQuery.executionResult?.base64Image}
-                    error={currentQuery.executionResult?.error}
-                    isLoading={isExecuting}
-                  />
-                </div>
+                )}
               </div>
             </div>
           )}
