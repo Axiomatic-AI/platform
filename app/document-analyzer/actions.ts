@@ -2,7 +2,7 @@
 
 import { prisma } from '@lib/prisma'
 import { auth0 } from '@lib/auth0'
-import { calculateDocumentSize, validateDocumentSize } from './utils'
+import { calculateDocumentSize, validateDocumentSize, compressImage, decompressImage } from './utils'
 
 export async function createDocument({
   title,
@@ -32,9 +32,17 @@ export async function createDocument({
     const validatedInterlineEquations = Array.isArray(interlineEquations) ? interlineEquations : []
     const validatedInlineEquations = Array.isArray(inlineEquations) ? inlineEquations : []
 
+    // Compress all images
+    const compressedImages: Record<string, string> = {}
+    for (const [key, value] of Object.entries(images)) {
+      if (value) {
+        compressedImages[key] = await compressImage(value)
+      }
+    }
+
     const totalSize = calculateDocumentSize({
       markdown,
-      images,
+      images: compressedImages,
       interlineEquations: validatedInterlineEquations,
       inlineEquations: validatedInlineEquations,
     })
@@ -45,7 +53,7 @@ export async function createDocument({
         userId: session.user.sub,
         title,
         markdown,
-        images,
+        images: compressedImages,
         interlineEquations: validatedInterlineEquations,
         inlineEquations: validatedInlineEquations,
       },
@@ -67,6 +75,13 @@ export async function getDocuments() {
     where: {
       userId: session.user.sub,
     },
+    select: {
+      id: true,
+      title: true,
+      createdAt: true,
+      updatedAt: true,
+      userId: true,
+    },
     orderBy: {
       createdAt: 'desc',
     },
@@ -77,12 +92,30 @@ export async function getDocument(id: string) {
   const session = await auth0.getSession()
   if (!session?.user?.sub) throw new Error('Unauthorized')
 
-  return prisma.document.findFirst({
+  const document = await prisma.document.findFirst({
     where: {
       id,
       userId: session.user.sub,
     },
   })
+
+  if (!document) {
+    return null
+  }
+
+  // Decompress all images
+  const decompressedImages: Record<string, string> = {}
+  const images = document.images as Record<string, string>
+  for (const [key, value] of Object.entries(images)) {
+    if (value && typeof value === 'string') {
+      decompressedImages[key] = await decompressImage(value)
+    }
+  }
+
+  return {
+    ...document,
+    images: decompressedImages,
+  }
 }
 
 export async function deleteAllDocuments() {

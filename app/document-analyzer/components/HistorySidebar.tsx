@@ -6,7 +6,7 @@ import { Document } from '@prisma/client';
 
 interface HistorySidebarProps {
   onDocumentSelect: (document: Document) => void;
-  currentDocumentId?: string;
+  currentDocumentId: string | null;
   documents: Document[];
   isLoading: boolean;
   onDeleteAll: () => void;
