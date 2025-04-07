@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { FigureImage } from './FigureImage';
 
 interface ResultProps {
   markdown: string;
@@ -43,9 +44,7 @@ export function Result({ markdown, images, interline_equations, inline_equations
     img: ({ src, alt, ...props }) => {
       if (src?.startsWith('data:')) {
         return (
-          <span className="flex justify-center my-4 test-123">
-            <img src={src} alt={alt || ''} className="max-w-full h-auto" {...props} />
-          </span>
+          <FigureImage plotImgBase64={src} />
         );
       }
       return (
