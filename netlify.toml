@@ -6,5 +6,5 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 [dev]
-  port = "8888"
+  port = 8888
 

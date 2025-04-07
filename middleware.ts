@@ -21,32 +21,29 @@ export async function middleware(request: NextRequest) {
     });
   }
 
-  // Handle authentication routes
   if (request.nextUrl.pathname.startsWith("/auth")) {
+    // For auth routes, let Auth0 handle them directly
     return auth0.middleware(request);
   }
 
-  const { origin } = new URL(request.url);
   const session = await auth0.getSession();
-
-  // user does not have a session — redirect to login
   if (!session) {
+    const { origin } = new URL(request.url);
     return NextResponse.redirect(`${origin}/auth/login`);
   }
 
-  return auth0.middleware(request);
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: 
     /*
      * Match all request paths except for the ones starting with:
-     * - api/auth (auth endpoints)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - images (public images)
      * - static (public static files)
      */
-    '/((?!api/auth|_next/static|_next/image|favicon.ico|images|static).*)',
+    '/((?!_next/static|_next/image|favicon.ico|images|static).*)',
 };

@@ -19,7 +19,6 @@ enum ThreadType {
 }
 
 model Thread {
-<<<<<<< Updated upstream
   id          String     @id @default(cuid())
   userId      String    
   title       String
@@ -27,15 +26,21 @@ model Thread {
   queries     Json[]     @default([])
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-=======
-  id          String   @id @default(cuid())
-  userId      String    
-  title       String
-  type        ThreadType
-  queries     Json[]   @default([])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
->>>>>>> Stashed changes
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Document {
+  id                  String   @id @default(cuid())
+  userId              String
+  title               String
+  markdown            String
+  images              Json     @default("{}")
+  interlineEquations  String[] @default([])
+  inlineEquations     String[] @default([])
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   @@index([userId])
   @@index([createdAt])
