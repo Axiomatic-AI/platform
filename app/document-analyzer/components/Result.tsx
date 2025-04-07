@@ -79,7 +79,9 @@ export function Result({ markdown, images, interline_equations, inline_equations
       if (text.includes('$')) {
         return (
           <p {...props}>
-            <MathJax>{text}</MathJax>
+            <span>
+              <MathJax>{text}</MathJax>
+            </span>
           </p>
         );
       }
