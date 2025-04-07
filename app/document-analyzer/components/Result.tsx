@@ -83,7 +83,7 @@ export function Result({ markdown, images, interline_equations, inline_equations
 
   return (
     <MathJaxContext config={mathjaxConfig}>
-      <div className="prose dark:prose-invert max-w-none p-6">
+      <div className="prose dark:prose-invert p-6 max-w-7xl mx-auto">
         <ReactMarkdown components={components} urlTransform={transformUrl}>
           {parsedMarkdown}
         </ReactMarkdown>
