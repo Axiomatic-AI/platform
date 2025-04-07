@@ -1,5 +1,7 @@
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
+import { MathJax, MathJaxContext } from 'better-react-mathjax';
 
 interface ResultProps {
   markdown: string;
@@ -9,12 +11,30 @@ interface ResultProps {
 }
 
 function placeImages(markdown: string, images: Record<string, string>) {
-  
   Object.entries(images).forEach(([key, value]) => {
     const imgTag = `data:image/png;base64,${value}`;
-    const imgInMarkdown = `![](${key})`;
-    const newImage = `![test](${imgTag})`;
-    markdown = markdown.replace(imgInMarkdown, newImage);
+    // Handle both ![]() and ![alt]() syntax
+    const imgInMarkdown = `!\\[([^\\]]*)\\]\\(${key}\\)`;
+    const newImage = `![$1](${imgTag})`;
+    markdown = markdown.replace(new RegExp(imgInMarkdown, 'g'), newImage);
+  });
+  return markdown;
+}
+
+function transformInlineEquations(markdown: string, inline_equations: string[]) {
+  inline_equations.forEach((equation) => {
+    const equationInMarkdown = `$${equation}$`;
+    const newEquation = `$${equation}$`;
+    markdown = markdown.replace(equationInMarkdown, newEquation);
+  });
+  return markdown;
+}
+
+function transformInterlineEquations(markdown: string, interline_equations: string[]) {
+  interline_equations.forEach((equation) => {
+    const equationInMarkdown = `$$${equation}$$`;
+    const newEquation = `$$${equation}$$`;
+    markdown = markdown.replace(equationInMarkdown, newEquation);
   });
   return markdown;
 }
@@ -25,6 +45,15 @@ function placeImages(markdown: string, images: Record<string, string>) {
 function transformUrl(url: string) {
   return url;
 }
+
+const mathjaxConfig = {
+  loader: { load: ["[tex]/html"] },
+  tex: {
+    packages: { "[+]": ["html"] },
+    inlineMath: [["$", "$"]],
+    displayMath: [["$$", "$$"]],
+  },
+};
 
 export function Result({ markdown, images, interline_equations, inline_equations }: ResultProps) {
   const components: Components = {
@@ -41,13 +70,43 @@ export function Result({ markdown, images, interline_equations, inline_equations
         </code>
       );
     },
+    img: ({ src, alt, ...props }) => {
+      // If the src is a data URL, render it directly
+      if (src?.startsWith('data:')) {
+        return <img src={src} alt={alt || ''} {...props} />;
+      }
+      // Otherwise, use the default img component
+      return <img src={src} alt={alt || ''} {...props} />;
+    },
+    p: ({ children, ...props }) => {
+      // Check if the paragraph contains math
+      const text = React.Children.toArray(children).join('');
+      if (text.includes('$')) {
+        return (
+          <p {...props}>
+            <MathJax>{text}</MathJax>
+          </p>
+        );
+      }
+      return <p {...props}>{children}</p>;
+    },
   };
 
+  const parsedMarkdown = transformInterlineEquations(
+    transformInlineEquations(
+      placeImages(markdown, images),
+      inline_equations
+    ),
+    interline_equations
+  );
+
   return (
-    <div className="prose dark:prose-invert max-w-none p-6">
-      <ReactMarkdown components={components} urlTransform={transformUrl}>
-        {placeImages(markdown, images)}
-      </ReactMarkdown>
-    </div>
+    <MathJaxContext config={mathjaxConfig}>
+      <div className="prose dark:prose-invert max-w-none p-6">
+        <ReactMarkdown components={components} urlTransform={transformUrl}>
+          {parsedMarkdown}
+        </ReactMarkdown>
+      </div>
+    </MathJaxContext>
   );
 } 
