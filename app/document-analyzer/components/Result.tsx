@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import { Document } from '@prisma/client';
+import { FigureImage } from './FigureImage';
 interface ResultProps {
   document: Document;
 }
@@ -43,9 +44,7 @@ export function Result({ document }: ResultProps) {
     img: ({ src, alt, ...props }) => {
       if (src?.startsWith('data:')) {
         return (
-          <span className="flex justify-center my-4 test-123">
-            <img src={src} alt={alt || ''} className="max-w-full h-auto" {...props} />
-          </span>
+          <FigureImage plotImgBase64={src} />
         );
       }
       return (
