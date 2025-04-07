@@ -1,8 +1,25 @@
 export class ApiClient {
   private baseUrl: string;
+  private readonly timeout: number;
 
-  constructor(baseUrl: string = '/backend-api') {
+  constructor(baseUrl: string = '/backend-api', timeout: number = 600000) {
     this.baseUrl = baseUrl;
+    this.timeout = timeout;
+  }
+
+  private async fetchWithTimeout(url: string, options: RequestInit): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+    
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+      return response;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   async post<T>(path: string, data: unknown, options?: { isFormData?: boolean }): Promise<T> {
@@ -12,7 +29,7 @@ export class ApiClient {
       headers['Content-Type'] = 'application/json';
     }
 
-    const response = await fetch(`${this.baseUrl}${path}`, {
+    const response = await this.fetchWithTimeout(`${this.baseUrl}${path}`, {
       method: 'POST',
       headers,
       body: options?.isFormData ? data as FormData : JSON.stringify(data),
