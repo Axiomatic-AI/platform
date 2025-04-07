@@ -67,7 +67,15 @@ export function Result({ markdown, images, interline_equations, inline_equations
       );
     },
     p: ({ children, ...props }) => {
-      const text = React.Children.toArray(children).join('');
+      const text = React.Children.toArray(children)
+        .map(child => {
+          if (typeof child === 'object' && child !== null && React.isValidElement(child)) {
+            const element = child as React.ReactElement<{ children: React.ReactNode }>;
+            return element.props.children;
+          }
+          return String(child);
+        })
+        .join('');
       if (text.includes('$')) {
         return (
           <p {...props}>
