@@ -8,10 +8,9 @@ import { Loading } from '../../components/Loading'
 import { Result } from './components/Result'
 import { HistorySidebar } from './components/HistorySidebar'
 import { useGetDocuments } from './hooks/useGetDocuments'
-import { Document } from '@prisma/client'
+import { useGetDocument } from './hooks/useGetDocument'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import { useDeleteAllDocuments } from './hooks/useDeleteAllDocuments'
-import { useGetDocument } from './hooks/useGetDocument'
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
@@ -78,8 +77,8 @@ export default function DocumentAnalyzerPage() {
     }
   }, [file, postParseDocument])
 
-  const handleDocumentSelect = useCallback((document: Document) => {
-    setCurrentDocumentId(document.id)
+  const handleDocumentSelect = useCallback((documentId: string) => {
+    setCurrentDocumentId(documentId)
   }, [])
 
 
@@ -88,7 +87,7 @@ export default function DocumentAnalyzerPage() {
       <div className="flex-0 flex flex-col">
         <HistorySidebar
           documents={documents ?? []}
-          currentDocumentId={currentDocumentId ?? undefined}
+          currentDocumentId={currentDocumentId}
           onDocumentSelect={handleDocumentSelect}
           isLoading={isLoadingDocuments}
           onDeleteAll={handleDeleteAll}

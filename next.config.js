@@ -27,19 +27,7 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '500mb',
     },
-  },
-  async headers() {
-    return [
-      {
-        source: '/backend-api/:path*',
-        headers: [
-          {
-            key: 'x-forwarded-timeout',
-            value: '600000', // 10 minutes in milliseconds
-          },
-        ],
-      },
-    ];
+    proxyTimeout: 600000,
   },
 };
 

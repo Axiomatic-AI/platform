@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { Document } from '@prisma/client';
 
 interface HistorySidebarProps {
-  onDocumentSelect: (document: Document) => void;
-  currentDocumentId?: string;
+  onDocumentSelect: (documentId: string) => void;
+  currentDocumentId: string | null;
   documents: Document[];
   isLoading: boolean;
   onDeleteAll: () => void;
@@ -92,7 +92,7 @@ export function HistorySidebar({ onDocumentSelect, currentDocumentId, documents,
             {sortedDocuments.map((document) => (
               <button
                 key={document.id}
-                onClick={() => onDocumentSelect(document)}
+                onClick={() => onDocumentSelect(document.id)}
                 className={`w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
                   currentDocumentId === document.id ? 'bg-gray-50 dark:bg-gray-700' : ''
                 }`}

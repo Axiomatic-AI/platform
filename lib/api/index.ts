@@ -17,6 +17,11 @@ export class ApiClient {
         signal: controller.signal,
       });
       return response;
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error(`Request to ${url} timed out after ${this.timeout}ms`);
+      }
+      throw error;
     } finally {
       clearTimeout(timeoutId);
     }
