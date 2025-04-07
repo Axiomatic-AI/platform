@@ -74,4 +74,23 @@ export async function getDocument(id: string) {
       userId: session.user.sub,
     },
   })
+}
+
+export async function deleteAllDocuments() {
+  try {
+    const session = await auth0.getSession()
+    if (!session?.user?.sub) throw new Error('Unauthorized')
+
+    return await prisma.document.deleteMany({
+      where: {
+        userId: session.user.sub,
+      },
+    })
+  } catch (error) {
+    console.error('Error deleting all documents:', error)
+    if (error instanceof Error) {
+      throw new Error(`Failed to delete all documents: ${error.message}`)
+    }
+    throw new Error('Failed to delete all documents: Unknown error')
+  }
 } 
