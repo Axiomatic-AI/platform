@@ -11,6 +11,7 @@ import { getDocument } from './actions'
 import { useGetDocuments } from './hooks/useGetDocuments'
 import { Document } from '@prisma/client'
 import { PlusIcon } from '@heroicons/react/24/outline'
+import { useDeleteAllDocuments } from './hooks/useDeleteAllDocuments'
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
@@ -20,6 +21,7 @@ export default function DocumentAnalyzerPage() {
   const [currentDocument, setCurrentDocument] = useState<Document | null>(null)
   const { data: documents, isLoading: isLoadingDocuments } = useGetDocuments()
   const { mutateAsync: postParseDocument, isPending: isLoading, error } = usePostParseDocument()
+  const { mutateAsync: deleteAllDocuments, isPending: isDeleting } = useDeleteAllDocuments()
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -48,6 +50,11 @@ export default function DocumentAnalyzerPage() {
       setFile(droppedFile)
     }
   }, [])
+
+  const handleDeleteAll = useCallback(async () => {
+    await deleteAllDocuments()
+    setCurrentDocument(null)
+  }, [deleteAllDocuments])
 
   const handleFileSelect = useCallback((selectedFile: File) => {
     if (selectedFile.type !== 'application/pdf') {
@@ -80,6 +87,8 @@ export default function DocumentAnalyzerPage() {
           currentDocumentId={currentDocument?.id}
           onDocumentSelect={handleDocumentSelect}
           isLoading={isLoadingDocuments}
+          onDeleteAll={handleDeleteAll}
+          isDeleting={isDeleting}
         />
       </div>
       {!currentDocument ? (

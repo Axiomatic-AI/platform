@@ -18,7 +18,7 @@ function placeImages(markdown: string, images: Record<string, string>) {
     const newImage = `![${key}](${imgTag})`;
     newMarkdown = newMarkdown.replace(imgInMarkdown, newImage);
   });
-  
+
   return newMarkdown;
 }
 
@@ -41,7 +41,6 @@ const mathjaxConfig = {
 export function Result({ markdown, images, interline_equations, inline_equations }: ResultProps) {
   const components: Components = {
     img: ({ src, alt, ...props }) => {
-      console.log("alt", alt)
       if (src?.startsWith('data:')) {
         return (
           <span className="flex justify-center my-4 test-123">

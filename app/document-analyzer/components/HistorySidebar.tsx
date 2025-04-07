@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { Document } from '@prisma/client';
 
@@ -9,9 +9,11 @@ interface HistorySidebarProps {
   currentDocumentId?: string;
   documents: Document[];
   isLoading: boolean;
+  onDeleteAll: () => void;
+  isDeleting: boolean;
 }
 
-export function HistorySidebar({ onDocumentSelect, currentDocumentId, documents, isLoading }: HistorySidebarProps) {
+export function HistorySidebar({ onDocumentSelect, currentDocumentId, documents, isLoading, onDeleteAll, isDeleting }: HistorySidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   if (isCollapsed) {
@@ -62,7 +64,22 @@ export function HistorySidebar({ onDocumentSelect, currentDocumentId, documents,
           <ChevronLeftIcon className="h-5 w-5" />
         </button>
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">History</h2>
+        {documents.length > 0 && (
+          <button
+            onClick={onDeleteAll}
+            disabled={isDeleting}
+            className="ml-auto text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 flex items-center gap-1 disabled:opacity-50"
+            title="Clear all history"
+          >
+            {isDeleting ? (
+              <ArrowPathIcon className="h-4 w-4 animate-spin-slow text-red-600 dark:text-red-400" />
+            ) : (
+              <TrashIcon className="h-4 w-4" />
+            )}
+          </button>
+        )}
       </div>
+      
       <div className="overflow-y-auto">
         {documents.length === 0 ? (
           <div className="p-4 text-sm text-gray-500 dark:text-gray-400">
