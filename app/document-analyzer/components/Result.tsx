@@ -55,15 +55,15 @@ export function Result({ markdown, images, interline_equations, inline_equations
     img: ({ src, alt, ...props }) => {
       if (src?.startsWith('data:')) {
         return (
-          <div className="flex justify-center my-4">
+          <span className="flex justify-center my-4">
             <img src={src} alt={alt || ''} className="max-w-full h-auto" {...props} />
-          </div>
+          </span>
         );
       }
       return (
-        <div className="flex justify-center my-4">
+        <span className="flex justify-center my-4">
           <img src={src} alt={alt || ''} className="max-w-full h-auto" {...props} />
-        </div>
+        </span>
       );
     },
     p: ({ children, ...props }) => {
