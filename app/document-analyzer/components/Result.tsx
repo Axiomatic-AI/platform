@@ -21,24 +21,6 @@ function placeImages(markdown: string, images: Record<string, string>) {
   return markdown;
 }
 
-function transformInlineEquations(markdown: string, inline_equations: string[]) {
-  inline_equations.forEach((equation) => {
-    const equationInMarkdown = `$${equation}$`;
-    const newEquation = `$${equation}$`;
-    markdown = markdown.replace(equationInMarkdown, newEquation);
-  });
-  return markdown;
-}
-
-function transformInterlineEquations(markdown: string, interline_equations: string[]) {
-  interline_equations.forEach((equation) => {
-    const equationInMarkdown = `$$${equation}$$`;
-    const newEquation = `$$${equation}$$`;
-    markdown = markdown.replace(equationInMarkdown, newEquation);
-  });
-  return markdown;
-}
-
 // THIS IS UNSAFE
 // TODO: Make it safe
 // See: https://github.com/remarkjs/react-markdown/issues/774
@@ -92,13 +74,7 @@ export function Result({ markdown, images, interline_equations, inline_equations
     },
   };
 
-  const parsedMarkdown = transformInterlineEquations(
-    transformInlineEquations(
-      placeImages(markdown, images),
-      inline_equations
-    ),
-    interline_equations
-  );
+  const parsedMarkdown = placeImages(markdown, images)
 
   return (
     <MathJaxContext config={mathjaxConfig}>
