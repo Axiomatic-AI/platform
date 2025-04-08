@@ -107,7 +107,7 @@ export function ImageSelector({ children, onSelect }: ImageSelectorProps) {
                 onMouseUp={handleMouseUp}
             >
                 {children}
-                {isSelecting && (
+                {isDragging && (
                     <div 
                         className="absolute border-2 border-primary-500 bg-primary-500/20"
                         style={{
