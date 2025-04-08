@@ -1,49 +1,15 @@
 import { getClient } from "@lib/api";
 import { useMutation } from "@tanstack/react-query";
+import { PlotPointsResponse } from "../types";
 
 interface PlotPointsRequest {
     plotImgBase64: string;
-}
-
-interface Point {
-  valueX: number,
-  valueY: number,
-  imgCoordX?: number,
-  imgCoordY?: number,
-}
-
-interface PlotPointsResponse {
-  axesInfo: {
-    origin: number[],
-    xAxisLen: number,
-    xContour?: number,
-    xTickMapping: Record<number, number[]>,
-    xTickMarks: number[][],
-    xTickVals: number[][],
-    yAxisLen: number,
-    yContour?: number,
-    yTickMapping: Record<number, number[]>,
-    yTickMarks: number[][],
-    yTickVals: number[][],
-  },
-  extractedPoints: Record<string, Point[]>,
-  plotInfo: {
-    blackGrayLine: boolean,
-    gridLines: boolean,
-    numOfLines: number,
-    xAxisMax: number,
-    xAxisMin: number,
-    xAxisName: string,
-    xAxisTickVals: number[],
-    xAxisUnit: string,
-    xScale: "string"
-    yAxisMax: number,
-    yAxisMin: number,
-    yAxisName: string,
-    yAxisTickVals: number[],
-    yAxisUnit: string,
-    yScale: "string"
-  }
+    coordinates?: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    };
 }
 
 function mapServerResponseToPlotPointsResponse(response: any): PlotPointsResponse {
@@ -75,17 +41,28 @@ function mapServerResponseToPlotPointsResponse(response: any): PlotPointsRespons
       yAxisMax: response.plot_info.y_axis_max,
       yAxisMin: response.plot_info.y_axis_min,
       yAxisName: response.plot_info.y_axis_name,
+      yAxisTickVals: response.plot_info.y_axis_tick_vals,
+      yAxisUnit: response.plot_info.y_axis_unit,
+      yScale: response.plot_info.y_scale
     }
   } as PlotPointsResponse
 }
 
-async function postPlotPoints({ plotImgBase64 }: PlotPointsRequest) {
+async function postPlotPoints({ plotImgBase64, coordinates }: PlotPointsRequest) {
   const base64Response = await fetch(plotImgBase64);
   const blob = await base64Response.blob();
   const file = new File([blob], 'plot.png', { type: 'image/png' });
 
   const formData = new FormData();
   formData.append('plot_img', file);
+  formData.append('get_img_coords', 'true');
+  
+  if (coordinates) {
+    formData.append('x', coordinates.x.toString());
+    formData.append('y', coordinates.y.toString());
+    formData.append('width', coordinates.width.toString());
+    formData.append('height', coordinates.height.toString());
+  }
 
   const response = await getClient().post<PlotPointsResponse>('/document/plot/points', formData, {
     isFormData: true
@@ -101,6 +78,7 @@ async function postPlotPoints({ plotImgBase64 }: PlotPointsRequest) {
 export function usePostPlotPoints() {
   return useMutation({
     mutationFn: postPlotPoints,
+    mutationKey: ['plotPoints'],
   });
 }
 

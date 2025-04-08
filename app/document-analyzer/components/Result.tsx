@@ -4,6 +4,7 @@ import type { Components } from 'react-markdown';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import { Document } from '@prisma/client';
 import { FigureImage } from './FigureImage';
+import { v4 as uuidv4 } from 'uuid';
 interface ResultProps {
   document: Document;
 }
@@ -44,7 +45,7 @@ export function Result({ document }: ResultProps) {
     img: ({ src, alt, ...props }) => {
       if (src?.startsWith('data:')) {
         return (
-          <FigureImage plotImgBase64={src} />
+          <FigureImage plotImgBase64={src} imgId={alt || uuidv4()} />
         );
       }
       return (
