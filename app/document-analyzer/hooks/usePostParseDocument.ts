@@ -51,24 +51,19 @@ export function usePostParseDocument(): UseMutationResult<Document, Error, Parse
 
       validateParseDocumentResponse(response);
 
-      try {
-        const document = await createDocument({
-          title: file.name,
-          markdown: response.markdown,
-          images: response.images,
-          interlineEquations: response.interline_equations,
-          inlineEquations: response.inline_equations,
-        });
+      const document = await createDocument({
+        title: file.name,
+        markdown: response.markdown,
+        images: response.images,
+        interlineEquations: response.interline_equations,
+        inlineEquations: response.inline_equations,
+      });
 
-        if (!document) {
-          throw new Error('Failed to create document in database');
-        }
-
-        return document;
-      } catch (error) {
-        console.error('Error creating document:', error);
-        throw error;
+      if (!document) {
+        throw new Error('Failed to create document in database');
       }
+
+      return document;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documents'] });
