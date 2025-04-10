@@ -20,25 +20,14 @@ export async function createDocument({
     const session = await auth0.getSession()
     if (!session?.user?.sub) throw new Error('Unauthorized')
 
-    if (!title || !markdown) {
-      throw new Error('Title and markdown are required')
-    }
-
-    if (!images || typeof images !== 'object') {
-      images = {}
-    }
-
-    const validatedInterlineEquations = Array.isArray(interlineEquations) ? interlineEquations : []
-    const validatedInlineEquations = Array.isArray(inlineEquations) ? inlineEquations : []
-
     return await prisma.document.create({
       data: {
         userId: session.user.sub,
         title,
         markdown,
         images,
-        interlineEquations: validatedInterlineEquations,
-        inlineEquations: validatedInlineEquations,
+        interlineEquations,
+        inlineEquations,
       },
     })
   } catch (error) {
