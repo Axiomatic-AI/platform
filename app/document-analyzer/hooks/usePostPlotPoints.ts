@@ -27,7 +27,7 @@ function mapServerResponseToPlotPointsResponse(response: any): PlotPointsRespons
       yTickMarks: response.axes_info.y_tick_marks,
       yTickVals: response.axes_info.y_tick_vals,
     },
-    extractedPoints: response.extracted_points,
+    extractedPoints: response.extracted_points.extracted_points, // TODO: Fix bad response format
     plotInfo: {
       blackGrayLine: response.plot_info.black_gray_line,
       gridLines: response.plot_info.grid_lines,
