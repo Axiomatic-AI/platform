@@ -14,6 +14,28 @@ interface ParseDocumentProps {
   file: File;
 }
 
+function validateParseDocumentResponse(response: ParseDocumentResponse) {
+  if (!response) {
+    throw new Error('No response received from the server');
+  }
+
+  if (!response.markdown) {
+    throw new Error('Invalid response format: markdown is required');
+  }
+
+  if (!response.images || typeof response.images !== 'object') {
+    throw new Error('No images received from the server');
+  }
+
+  if (!Array.isArray(response.interline_equations)) {
+    throw new Error('Invalid response format: interline_equations is not an array');
+  }
+
+  if (!Array.isArray(response.inline_equations)) {
+    throw new Error('Invalid response format: inline_equations is not an array');
+  }
+}
+
 export function usePostParseDocument(): UseMutationResult<Document, Error, ParseDocumentProps> {
   const queryClient = useQueryClient();
 
@@ -27,76 +49,23 @@ export function usePostParseDocument(): UseMutationResult<Document, Error, Parse
         isFormData: true
       });
 
-      if (!response) {
-        throw new Error('No response received from the server');
-      }
+      validateParseDocumentResponse(response);
 
-      console.log('Parse response:', response);
-
-      // Validate the response structure
-      if (!response.markdown) {
-        throw new Error('Invalid response format: markdown is required');
-      }
-
-      // Ensure images is an object
-      if (!response.images || typeof response.images !== 'object') {
-        response.images = {};
-      }
-
-      // Ensure arrays are arrays
-      const interlineEquations = Array.isArray(response.interline_equations) ? response.interline_equations : [];
-      const inlineEquations = Array.isArray(response.inline_equations) ? response.inline_equations : [];
-
-      try {
-        const document = await createDocument({
-          title: file.name,
-          markdown: response.markdown,
-          images: response.images,
-          interlineEquations,
-          inlineEquations,
-        });
-
-        if (!document) {
-          throw new Error('Failed to create document in database');
-        }
-
-        return document;
-      } catch (error) {
-        console.error('Error creating document:', error);
-        throw error;
-      }
-    },
-    onMutate: async ({ file }) => {
-      await queryClient.cancelQueries({ queryKey: ['documents'] });
-
-      const previousDocuments = queryClient.getQueryData<Document[]>(['documents']);
-
-      // Create an optimistic document
-      const optimisticDocument = {
-        id: 'temp',
-        userId: 'temp', // This will be replaced with the actual user ID when the document is created
+      const document = await createDocument({
         title: file.name,
-        markdown: '',
-        images: {},
-        interlineEquations: [],
-        inlineEquations: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      } as unknown as Document;
-
-      queryClient.setQueryData<Document[]>(['documents'], (old) => {
-        if (!old) return [optimisticDocument];
-        return [...old, optimisticDocument];
+        markdown: response.markdown,
+        images: response.images,
+        interlineEquations: response.interline_equations,
+        inlineEquations: response.inline_equations,
       });
 
-      return { previousDocuments };
-    },
-    onError: (err, newTodo, context) => {
-      if (context?.previousDocuments) {
-        queryClient.setQueryData(['documents'], context.previousDocuments);
+      if (!document) {
+        throw new Error('Failed to create document in database');
       }
+
+      return document;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documents'] });
     },
   });

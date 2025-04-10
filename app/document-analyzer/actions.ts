@@ -2,6 +2,7 @@
 
 import { prisma } from '@lib/prisma'
 import { auth0 } from '@lib/auth0'
+import { compressImages, decompressImages } from './utils/compress-images'
 
 export async function createDocument({
   title,
@@ -20,25 +21,14 @@ export async function createDocument({
     const session = await auth0.getSession()
     if (!session?.user?.sub) throw new Error('Unauthorized')
 
-    if (!title || !markdown) {
-      throw new Error('Title and markdown are required')
-    }
-
-    if (!images || typeof images !== 'object') {
-      images = {}
-    }
-
-    const validatedInterlineEquations = Array.isArray(interlineEquations) ? interlineEquations : []
-    const validatedInlineEquations = Array.isArray(inlineEquations) ? inlineEquations : []
-
     return await prisma.document.create({
       data: {
         userId: session.user.sub,
         title,
         markdown,
-        images,
-        interlineEquations: validatedInterlineEquations,
-        inlineEquations: validatedInlineEquations,
+        images: compressImages(images),
+        interlineEquations,
+        inlineEquations,
       },
     })
   } catch (error) {
@@ -58,6 +48,13 @@ export async function getDocuments() {
     where: {
       userId: session.user.sub,
     },
+    select: {
+      id: true,
+      title: true,
+      updatedAt: true,
+      createdAt: true,
+      userId: true,
+    },
     orderBy: {
       createdAt: 'desc',
     },
@@ -68,12 +65,21 @@ export async function getDocument(id: string) {
   const session = await auth0.getSession()
   if (!session?.user?.sub) throw new Error('Unauthorized')
 
-  return prisma.document.findFirst({
+  const document = await prisma.document.findFirst({
     where: {
       id,
       userId: session.user.sub,
     },
   })
+
+  if (!document) {
+    return null
+  }
+
+  return {
+    ...document,
+    images: decompressImages(document.images as Record<string, string>),
+  }
 }
 
 export async function deleteAllDocuments() {
