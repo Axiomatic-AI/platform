@@ -10,8 +10,8 @@ interface ResultProps {
 function placeImages(markdown: string, images: Record<string, string>) {
   let newMarkdown = markdown;
   Object.entries(images).forEach(([key, value]) => {
-    const imgTag = `data:image/png;base64,${value}`;
-    const imgInMarkdown = `![](${key})`;
+    const imgTag = value;
+    const imgInMarkdown = `![${key}](${key})`;
     const newImage = `![${key}](${imgTag})`;
     newMarkdown = newMarkdown.replace(imgInMarkdown, newImage);
   });
