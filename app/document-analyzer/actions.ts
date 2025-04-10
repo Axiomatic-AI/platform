@@ -52,6 +52,7 @@ export async function getDocuments() {
       id: true,
       title: true,
       updatedAt: true,
+      createdAt: true,
       userId: true,
     },
     orderBy: {
