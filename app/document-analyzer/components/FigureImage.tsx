@@ -2,6 +2,7 @@ import { usePostPlotPoints } from "../hooks/usePostPlotPoints";
 import { PlotPointsResponse } from "../types";
 import { useEffect, useState } from "react";
 import { ImageSelector } from "./ImageSelector";
+import { ExtractedPlotOverlay } from "./ExtractedPlotOverlay";
 
 interface SelectionCoordinates {
     x: number;
@@ -28,19 +29,14 @@ export function FigureImage({ plotImgBase64 }: { plotImgBase64: string, imgId: s
         y: plotData?.axesInfo.origin[1] + selectedCoordinates?.y - plotData?.axesInfo.yAxisLen
     } : null
 
-    if (plotData) {
+    if (plotData && originRelativeToSelectedCoordinates) {
         return (
             <span className="flex justify-center my-4 test-123 max-w-full h-auto m-0">
                 <span className="relative m-0">
                     <img src={plotImgBase64} alt={'Plot'} className="w-auto h-auto m-0" onClick={() => handlePlotPoints()} />
-                    <div 
-                        className="absolute border-2 border-primary-500/50 bg-primary-500/10"
-                        style={{
-                            left: `${originRelativeToSelectedCoordinates?.x}px`,
-                            top: `${originRelativeToSelectedCoordinates?.y}px`,
-                            width: `${plotData.axesInfo.xAxisLen}px`,
-                            height: `${plotData.axesInfo.yAxisLen}px`,
-                        }}
+                    <ExtractedPlotOverlay 
+                        plotData={plotData}
+                        originRelativeToSelectedCoordinates={originRelativeToSelectedCoordinates}
                     />
                 </span>
             </span>
