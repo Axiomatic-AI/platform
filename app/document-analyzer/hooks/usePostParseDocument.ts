@@ -43,9 +43,8 @@ export function usePostParseDocument(): UseMutationResult<Document, Error, Parse
     mutationFn: async ({ file }: ParseDocumentProps) => {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('method', 'mistral');
 
-      const response = await getClient().post<ParseDocumentResponse>('/document/parse', formData, {
+      const response = await getClient().post<ParseDocumentResponse>('/document/parse?method=mistral&ocr=true', formData, {
         isFormData: true
       });
 
