@@ -70,37 +70,7 @@ export function usePostParseDocument(): UseMutationResult<Document, Error, Parse
         throw error;
       }
     },
-    onMutate: async ({ file }) => {
-      await queryClient.cancelQueries({ queryKey: ['documents'] });
-
-      const previousDocuments = queryClient.getQueryData<Document[]>(['documents']);
-
-      // Create an optimistic document
-      const optimisticDocument = {
-        id: 'temp',
-        userId: 'temp', // This will be replaced with the actual user ID when the document is created
-        title: file.name,
-        markdown: '',
-        images: {},
-        interlineEquations: [],
-        inlineEquations: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      } as unknown as Document;
-
-      queryClient.setQueryData<Document[]>(['documents'], (old) => {
-        if (!old) return [optimisticDocument];
-        return [...old, optimisticDocument];
-      });
-
-      return { previousDocuments };
-    },
-    onError: (err, newTodo, context) => {
-      if (context?.previousDocuments) {
-        queryClient.setQueryData(['documents'], context.previousDocuments);
-      }
-    },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documents'] });
     },
   });
