@@ -14,6 +14,28 @@ interface ParseDocumentProps {
   file: File;
 }
 
+function validateParseDocumentResponse(response: ParseDocumentResponse) {
+  if (!response) {
+    throw new Error('No response received from the server');
+  }
+
+  if (!response.markdown) {
+    throw new Error('Invalid response format: markdown is required');
+  }
+
+  if (!response.images || typeof response.images !== 'object') {
+    throw new Error('No images received from the server');
+  }
+
+  if (!Array.isArray(response.interline_equations)) {
+    throw new Error('Invalid response format: interline_equations is not an array');
+  }
+
+  if (!Array.isArray(response.inline_equations)) {
+    throw new Error('Invalid response format: inline_equations is not an array');
+  }
+}
+
 export function usePostParseDocument(): UseMutationResult<Document, Error, ParseDocumentProps> {
   const queryClient = useQueryClient();
 
@@ -27,33 +49,15 @@ export function usePostParseDocument(): UseMutationResult<Document, Error, Parse
         isFormData: true
       });
 
-      if (!response) {
-        throw new Error('No response received from the server');
-      }
-
-      console.log('Parse response:', response);
-
-      // Validate the response structure
-      if (!response.markdown) {
-        throw new Error('Invalid response format: markdown is required');
-      }
-
-      // Ensure images is an object
-      if (!response.images || typeof response.images !== 'object') {
-        response.images = {};
-      }
-
-      // Ensure arrays are arrays
-      const interlineEquations = Array.isArray(response.interline_equations) ? response.interline_equations : [];
-      const inlineEquations = Array.isArray(response.inline_equations) ? response.inline_equations : [];
+      validateParseDocumentResponse(response);
 
       try {
         const document = await createDocument({
           title: file.name,
           markdown: response.markdown,
           images: response.images,
-          interlineEquations,
-          inlineEquations,
+          interlineEquations: response.interline_equations,
+          inlineEquations: response.inline_equations,
         });
 
         if (!document) {
