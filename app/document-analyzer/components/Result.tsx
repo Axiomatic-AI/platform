@@ -2,12 +2,11 @@ import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import { useGetDocument } from '../hooks/useGetDocument';
+import { Loading } from './Loading';
 
 interface ResultProps {
-  markdown: string;
-  images: Record<string, string>;
-  interline_equations: string[];
-  inline_equations: string[];
+  documentId: string;
 }
 
 function placeImages(markdown: string, images: Record<string, string>) {
@@ -38,7 +37,11 @@ const mathjaxConfig = {
   },
 };
 
-export function Result({ markdown, images, interline_equations, inline_equations }: ResultProps) {
+export function Result({ documentId }: ResultProps) {
+  const { data: document, isLoading } = useGetDocument(documentId);
+  const parsedMarkdown = useMemo(() => placeImages(document?.markdown ?? '', document?.images as Record<string, string> ?? {}), [document?.markdown, document?.images]);
+
+
   const components: Components = {
     img: ({ src, alt, ...props }) => {
       if (src?.startsWith('data:')) {
@@ -54,11 +57,15 @@ export function Result({ markdown, images, interline_equations, inline_equations
         </span>
       );
     },
-
   };
 
-  const parsedMarkdown = useMemo(() => placeImages(markdown, images), [markdown, images])
+  if (isLoading) {
+    return <Loading />;
+  }
 
+  if (!document) {
+    return null;
+  }
   return (
     <MathJaxContext config={mathjaxConfig}>
       <div className="prose dark:prose-invert p-6 max-w-7xl mx-auto">
