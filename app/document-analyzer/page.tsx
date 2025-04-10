@@ -4,14 +4,14 @@ import React, { useState, useCallback } from 'react'
 import { usePostParseDocument } from './hooks/usePostParseDocument'
 import { FileUpload } from './components/FileUpload'
 import { Error } from './components/Error'
-import { Loading } from './components/Loading'
+import { Loading } from '../../components/Loading'
 import { Result } from './components/Result'
 import { HistorySidebar } from './components/HistorySidebar'
-import { getDocument } from './actions'
 import { useGetDocuments } from './hooks/useGetDocuments'
 import { Document } from '@prisma/client'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import { useDeleteAllDocuments } from './hooks/useDeleteAllDocuments'
+import { useGetDocument } from './hooks/useGetDocument'
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
@@ -19,9 +19,12 @@ export default function DocumentAnalyzerPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(null)
+  const { data: currentDocument, isLoading: isLoadingDocument } = useGetDocument(currentDocumentId);
   const { data: documents, isLoading: isLoadingDocuments } = useGetDocuments()
-  const { mutateAsync: postParseDocument, isPending: isLoading, error } = usePostParseDocument()
+  const { mutateAsync: postParseDocument, isPending: isParsing, error } = usePostParseDocument()
   const { mutateAsync: deleteAllDocuments, isPending: isDeleting } = useDeleteAllDocuments()
+
+  const isLoading = isLoadingDocument || isParsing
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -79,6 +82,7 @@ export default function DocumentAnalyzerPage() {
     setCurrentDocumentId(document.id)
   }, [])
 
+
   return (
     <div className="flex h-full w-full">
       <div className="flex-0 flex flex-col">
@@ -91,35 +95,28 @@ export default function DocumentAnalyzerPage() {
           isDeleting={isDeleting}
         />
       </div>
-      {!currentDocumentId ? (
-        <div className="flex-1 flex flex-col h-full items-center justify-center">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-md mx-auto text-center">
-            <FileUpload
-              file={file}
-              isDragging={isDragging}
-              onFileSelect={handleFileSelect}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-            />
+      <div className="flex-1 h-full overflow-y-scroll">
+        {isLoading && (
+          <div className="h-full max-w-5xl mx-auto"><Loading /></div> 
+        )}
 
-            {error && <Error message={error.message} />}
+        {!currentDocumentId && !isLoading && (
+          <FileUpload
+            file={file}
+            isDragging={isDragging}
+            onFileSelect={handleFileSelect}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            error={error}
+            isLoading={isLoading}
+            handleAnalyze={handleAnalyze}
+          />
+        )}
 
-            {file && (
-              <button
-                className="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={handleAnalyze}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Analyzing...' : 'Analyze Document'}
-              </button>
-            )}
-
-            {isLoading && <Loading />}
-          </div>
-        </div>
-      ) : (
-        <div className="flex-1 h-full overflow-y-scroll">
+      {currentDocument && !isLoading && (
+        <>
+          <Result document={currentDocument} />
           <div className="fixed right-4 bottom-4 z-10">
             <button
               className="bg-primary-500 text-white p-3 rounded-full shadow-lg hover:bg-primary-600 transition-colors duration-200 flex items-center justify-center group relative"
@@ -131,9 +128,9 @@ export default function DocumentAnalyzerPage() {
               </span>
             </button>
           </div>
-          {currentDocumentId && <Result documentId={currentDocumentId} />}
-        </div>
+        </>
       )}
+      </div>
     </div>
   )
 } 

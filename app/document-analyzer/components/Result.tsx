@@ -2,11 +2,9 @@ import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
-import { useGetDocument } from '../hooks/useGetDocument';
-import { Loading } from './Loading';
-
+import { Document } from '@prisma/client';
 interface ResultProps {
-  documentId: string;
+  document: Document;
 }
 
 function placeImages(markdown: string, images: Record<string, string>) {
@@ -37,8 +35,7 @@ const mathjaxConfig = {
   },
 };
 
-export function Result({ documentId }: ResultProps) {
-  const { data: document, isLoading } = useGetDocument(documentId);
+export function Result({ document }: ResultProps) {
   const parsedMarkdown = useMemo(() => placeImages(document?.markdown ?? '', document?.images as Record<string, string> ?? {}), [document?.markdown, document?.images]);
 
 
@@ -58,10 +55,6 @@ export function Result({ documentId }: ResultProps) {
       );
     },
   };
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   if (!document) {
     return null;
