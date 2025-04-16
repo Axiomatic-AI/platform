@@ -1,6 +1,6 @@
 import { getClient } from "@lib/api";
 import { useMutation } from "@tanstack/react-query";
-import { PlotPointsResponse } from "../types";
+import { PlotPointsResponse, Point } from "../types";
 
 interface PlotPointsRequest {
     plotImgBase64: string;
@@ -10,6 +10,21 @@ interface PlotPointsRequest {
         width: number;
         height: number;
     };
+}
+
+
+type Series = {
+  colour: string;
+  points: ServerPoint[]
+}
+
+type ServerPoint = {
+  value_x: number;
+  value_y: number
+}
+
+function mapPoints(points: any): Point[] {
+  return points.map((point: any) => ({ valueX: point.value_x, valueY: point.value_y }));
 }
 
 function mapServerResponseToPlotPointsResponse(response: any): PlotPointsResponse {
@@ -27,7 +42,7 @@ function mapServerResponseToPlotPointsResponse(response: any): PlotPointsRespons
       yTickMarks: response.axes_info.y_tick_marks,
       yTickVals: response.axes_info.y_tick_vals,
     },
-    extractedPoints: response.extracted_points.extracted_points, // TODO: Fix bad response format
+    extractedPoints: mapPoints(response.extracted_points.extracted_points),
     plotInfo: {
       blackGrayLine: response.plot_info.black_gray_line,
       gridLines: response.plot_info.grid_lines,
@@ -64,7 +79,7 @@ async function postPlotPoints({ plotImgBase64, coordinates }: PlotPointsRequest)
     formData.append('height', coordinates.height.toString());
   }
 
-  const response = await getClient().post<PlotPointsResponse>('/document/plot/points', formData, {
+  const response = await getClient().post<PlotPointsResponse>('/document/plot/points?v2=true', formData, {
     isFormData: true
   });
 
