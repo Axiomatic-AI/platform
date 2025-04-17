@@ -42,6 +42,22 @@ export function Result({ document }: ResultProps) {
 
 
   const components: Components = {
+    p: ({ children }) => {
+      // Check if any child has a data: URL src
+      const hasFigureImage = React.Children.toArray(children).some(
+        child => {
+          if (!React.isValidElement(child)) return false;
+          const props = child.props as { src?: string };
+          return props.src?.startsWith('data:') ?? false;
+        }
+      );
+      
+      if (hasFigureImage) {
+        return <>{children}</>;
+      }
+      
+      return <p>{children}</p>;
+    },
     img: ({ src, alt, ...props }) => {
       if (src?.startsWith('data:')) {
         return (
@@ -49,7 +65,7 @@ export function Result({ document }: ResultProps) {
         );
       }
       return (
-        <span className="flex justify-center my-4 test-123">
+        <span className="flex justify-center my-4">
           <img src={src} alt={alt || ''} className="max-w-full h-auto" {...props} />
         </span>
       );
@@ -63,8 +79,13 @@ export function Result({ document }: ResultProps) {
     <MathJaxContext config={mathjaxConfig}>
       <div className="prose dark:prose-invert p-6 max-w-7xl mx-auto">
         <MathJax dynamic hideUntilTypeset="every">
-          <ReactMarkdown components={components} urlTransform={transformUrl}>
-              {parsedMarkdown}
+          <ReactMarkdown 
+            components={components} 
+            urlTransform={transformUrl}
+            unwrapDisallowed={true}
+            allowedElements={['p', 'img', 'div', 'span']}
+          >
+            {parsedMarkdown}
           </ReactMarkdown>
         </MathJax>
       </div>
