@@ -52,8 +52,8 @@ export function SelectedPlotArea({ left, top, width, height, onReset, selectedIm
                 {plotData && <Plot data={plotData} />}
             </div>
             {isPending && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/20 dark:bg-white/20 z-30">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white dark:border-gray-800"></div>
+                <div className="absolute w-full h-full flex justify-center items-center bg-black/10 dark:bg-white/10 z-30">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
                 </div>
             )}
         </>

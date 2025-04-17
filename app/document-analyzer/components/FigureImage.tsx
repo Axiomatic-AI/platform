@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ImageSelector } from "./ImageSelector";
 import { ExtractedPlotOverlay } from "./ExtractedPlotOverlay";
 import { SelectedPlotArea } from "./SelectedPlotArea";
+import { InitialStep } from "./InitialStep";
 
 interface SelectionCoordinates {
     x: number;
@@ -39,14 +40,7 @@ export function FigureImage({ plotImgBase64 }: { plotImgBase64: string, imgId: s
             <span className="flex justify-center my-4 test-123 max-w-full h-auto m-0">
                 <span className="relative m-0">
                     {currentStep === 'initial' && (
-                        <div 
-                            className="absolute inset-0 flex items-center justify-center bg-black/20 cursor-pointer"
-                            onClick={handleStartSelection}
-                        >
-                            <div className="bg-white/90 dark:bg-gray-800/90 px-4 py-2 rounded-lg shadow-lg">
-                                <span className="text-primary-500 font-medium">Create digital twin</span>
-                            </div>
-                        </div>
+                        <InitialStep onStartSelection={handleStartSelection} />
                     )}
                     
                     {currentStep === 'selecting' && (
