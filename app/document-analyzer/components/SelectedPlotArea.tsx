@@ -2,17 +2,12 @@ import { Series } from '../types';
 import { Plot } from './Plot';
 
 interface SelectedPlotAreaProps {
-    left: number;
-    top: number;
-    width: number;
-    height: number;
     selectedImage: string;
     series: Series[];
-    selectedSeries: string[];
     isPending: boolean;
 }
 
-export function SelectedPlotArea({ left, top, width, height, selectedImage, series, selectedSeries, isPending }: SelectedPlotAreaProps) {
+export function SelectedPlotArea({ selectedImage, series, isPending }: SelectedPlotAreaProps) {
     return (
         <div className="relative w-full h-full flex items-center justify-center">
             <div className="relative w-full h-full flex items-center justify-center">
@@ -22,7 +17,7 @@ export function SelectedPlotArea({ left, top, width, height, selectedImage, seri
                         alt="Selected Plot Area" 
                         className="w-full h-full object-contain m-0 p-0" 
                     />
-                    <Plot series={series} selectedSeries={selectedSeries} />
+                    <Plot series={series} />
                 </div>
             </div>
             {isPending && (

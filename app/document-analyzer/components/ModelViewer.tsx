@@ -2,7 +2,7 @@ import { SelectedPlotArea } from "./SelectedPlotArea";
 import { ModelViewerSidePanel } from "./ModelViewerSidePanel";
 import { usePostPlotPoints } from '../hooks/usePostPlotPoints';
 import { useEffect, useState } from 'react';
-import { PlotPointsResponse } from '../types';
+import { PlotPointsResponse, Series } from '../types';
 import { Snackbar } from './Snackbar';
 
 interface SelectionCoordinates {
@@ -21,7 +21,7 @@ export function ModelViewer({ selectedImage, selectedCoordinates }: ModelViewerP
     const { mutate: postPlotPoints, isPending, error } = usePostPlotPoints();
     const [plotData, setPlotData] = useState<PlotPointsResponse | null>(null);
     const [showError, setShowError] = useState(false);
-    const [selectedSeries, setSelectedSeries] = useState<string[]>([]);
+    const [selectedSeriesIds, setSelectedSeriesIds] = useState<string[]>([]);
 
     useEffect(() => {
         if (error) {
@@ -42,10 +42,12 @@ export function ModelViewer({ selectedImage, selectedCoordinates }: ModelViewerP
             onSuccess: (data) => {
                 setPlotData(data);
                 // Select all series by default
-                setSelectedSeries(data.extractedSeries.map(series => series.id));
+                setSelectedSeriesIds(data.extractedSeries.map(series => series.id));
             }
         });
     }, [selectedImage, selectedCoordinates, postPlotPoints]);
+
+    const selectedSeries = plotData?.extractedSeries.filter(series => selectedSeriesIds.includes(series.id)) || [];
 
     return (
         <div className="flex h-full space-x-6">
@@ -54,21 +56,16 @@ export function ModelViewer({ selectedImage, selectedCoordinates }: ModelViewerP
                 <ModelViewerSidePanel 
                     plotData={plotData}
                     isPending={isPending}
-                    selectedSeries={selectedSeries}
-                    onSeriesChange={setSelectedSeries}
+                    selectedSeries={selectedSeriesIds}
+                    onSeriesChange={setSelectedSeriesIds}
                 />
             </div>
 
             {/* Image Area */}
             <div className="flex-1 relative bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <SelectedPlotArea 
-                    left={selectedCoordinates.x}
-                    top={selectedCoordinates.y}
-                    width={selectedCoordinates.width}
-                    height={selectedCoordinates.height}
                     selectedImage={selectedImage}
-                    series={plotData?.extractedSeries || []}
-                    selectedSeries={selectedSeries}
+                    series={selectedSeries}
                     isPending={isPending}
                 />
             </div>
