@@ -6,45 +6,36 @@ interface PlotProps {
 
 export function Plot({ data }: PlotProps) {
     const { origin, extractedSeries, xAxisLen, yAxisLen } = data;
+    console.log(data);
 
     return (
         <div className="relative w-full h-full">
-            {/* Axes */}
+            {/* Bounding Box */}
             <div 
-                className="absolute bg-gray-800 dark:bg-gray-200"
+                className="absolute border-2 border-dashed border-gray-400 dark:border-gray-600"
                 style={{
-                    left: `${origin[0]}px`,
-                    top: `${origin[1]}px`,
-                    width: `${xAxisLen}px`,
-                    height: '1px',
+                    left: `${origin[0] * 100}%`,
+                    top: `${(1 - origin[1]) * 100}%`,
+                    width: `${xAxisLen * 100}%`,
+                    height: `${yAxisLen * 100}%`,
+                    transform: 'translateY(-100%)',
                 }}
-            />
-            <div 
-                className="absolute bg-gray-800 dark:bg-gray-200"
-                style={{
-                    left: `${origin[0]}px`,
-                    top: `${origin[1] - yAxisLen}px`,
-                    width: '1px',
-                    height: `${yAxisLen}px`,
-                }}
-            />
+            >
+            </div>
 
-            {/* Plot points */}
+            {/* Plot Points */}
             {extractedSeries.map((series) => (
-                <div key={series.id}>
-                    {series.points.map((point, index) => (
-                        <div
-                            key={`${series.id}-${index}`}
-                            className="absolute w-2 h-2 rounded-full"
-                            style={{
-                                left: `${point.percentageCoordX}%`,
-                                top: `${point.percentageCoordY}%`,
-                                backgroundColor: `rgb(${series.colour.join(',')})`,
-                                transform: 'translate(-50%, -50%)',
-                            }}
-                        />
-                    ))}
-                </div>
+                series.points.map((point, index) => (
+                    <div
+                        key={`${series.id}-${index}`}
+                        className="absolute w-2 h-2 rounded-full transform -translate-x-1/2 -translate-y-1/2"
+                        style={{
+                            left: `${point.percentageCoordX * 100}%`,
+                            top: `${(1 - point.percentageCoordY) * 100}%`,
+                            backgroundColor: `rgb(${series.color.join(',')})`,
+                        }}
+                    />
+                ))
             ))}
         </div>
     );

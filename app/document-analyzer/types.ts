@@ -6,7 +6,7 @@ export interface Point {
 }
 
 export interface Series {
-  colour: string[],
+  color: string[],
   id: string, 
   points: Point[]
 }
