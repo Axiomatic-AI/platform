@@ -24,13 +24,6 @@ const levelStyles: Record<SnackbarLevel, { bg: string; text: string }> = {
   }
 };
 
-const slideInRight = {
-  '0%': { transform: 'translateX(100%)' },
-  '60%': { transform: 'translateX(-10%)' },
-  '80%': { transform: 'translateX(5%)' },
-  '100%': { transform: 'translateX(0%)' }
-};
-
 export function Snackbar({ 
   message, 
   onClose, 
