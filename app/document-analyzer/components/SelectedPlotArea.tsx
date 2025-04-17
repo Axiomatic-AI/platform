@@ -49,7 +49,7 @@ export function SelectedPlotArea({ left, top, width, height, onReset, selectedIm
                 <span className="text-sm text-gray-700 dark:text-gray-300">Reset</span>
             </button>
             <div 
-                className="absolute bg-black/10 dark:bg-white/10"
+                className="absolute"
                 style={{
                     left: `${left}px`,
                     top: `${top}px`,
