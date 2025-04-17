@@ -5,7 +5,7 @@ interface PlotProps {
 }
 
 export function Plot({ data }: PlotProps) {
-    const { origin, extractedSeries, xAxisLen, yAxisLen } = data;
+    const { extractedSeries } = data;
 
     return (
         <div className="relative w-full h-full">
@@ -13,7 +13,7 @@ export function Plot({ data }: PlotProps) {
                 series.points.map((point, index) => (
                     <div
                         key={`${series.id}-${index}`}
-                        className="absolute w-2 h-2 rounded-full transform -translate-x-1/2 -translate-y-1/2"
+                        className="absolute w-1.5 h-1.5 rounded-full transform -translate-x-1/2 -translate-y-1/2"
                         style={{
                             left: `${point.percentageCoordX * 100}%`,
                             bottom: `${point.percentageCoordY * 100}%`,

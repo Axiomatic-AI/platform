@@ -1,8 +1,5 @@
-import { usePostPlotPoints } from "../hooks/usePostPlotPoints";
-import { PlotPointsResponse } from "../types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ImageSelector } from "./ImageSelector";
-import { ExtractedPlotOverlay } from "./ExtractedPlotOverlay";
 import { SelectedPlotArea } from "./SelectedPlotArea";
 import { InitialStep } from "./InitialStep";
 
