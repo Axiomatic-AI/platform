@@ -2,6 +2,7 @@ import { usePostPlotPoints } from '../hooks/usePostPlotPoints';
 import { useEffect, useState } from 'react';
 import { PlotPointsResponse } from '../types';
 import { Plot } from './Plot';
+import { Snackbar } from './Snackbar';
 
 interface SelectedPlotAreaProps {
     left: number;
@@ -13,8 +14,15 @@ interface SelectedPlotAreaProps {
 }
 
 export function SelectedPlotArea({ left, top, width, height, onReset, selectedImage }: SelectedPlotAreaProps) {
-    const { mutate: postPlotPoints, isPending } = usePostPlotPoints();
+    const { mutate: postPlotPoints, isPending, error } = usePostPlotPoints();
     const [plotData, setPlotData] = useState<PlotPointsResponse | null>(null);
+    const [showError, setShowError] = useState(false);
+
+    useEffect(() => {
+        if (error) {
+            setShowError(true);
+        }
+    }, [error]);
 
     useEffect(() => {
         postPlotPoints({
@@ -55,6 +63,13 @@ export function SelectedPlotArea({ left, top, width, height, onReset, selectedIm
                 <div className="absolute w-full h-full flex justify-center items-center bg-black/10 dark:bg-white/10 z-30">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
                 </div>
+            )}
+            {showError && (
+                <Snackbar 
+                    message="Failed to extract plot points. Please try again." 
+                    onClose={() => setShowError(false)}
+                    level="error"
+                />
             )}
         </>
     );

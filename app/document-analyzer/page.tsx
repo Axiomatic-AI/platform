@@ -3,7 +3,6 @@
 import React, { useState, useCallback } from 'react'
 import { usePostParseDocument } from './hooks/usePostParseDocument'
 import { FileUpload } from './components/FileUpload'
-import { Error } from './components/Error'
 import { Loading } from '../../components/Loading'
 import { HistorySidebar } from './components/HistorySidebar'
 import { useGetDocuments } from './hooks/useGetDocuments'
