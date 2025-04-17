@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { InitialStep } from "./InitialStep";
 import { DigitalTwinCreator } from "./DigitalTwinCreator";
-import { Modal } from "../../../components/Modal";
 
 export function FigureImage({ plotImgBase64 }: { plotImgBase64: string, imgId: string }) {
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -23,9 +22,16 @@ export function FigureImage({ plotImgBase64 }: { plotImgBase64: string, imgId: s
                 </span>
             </span>
 
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                <DigitalTwinCreator imageSrc={plotImgBase64} />
-            </Modal>
+            {isModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+                    <div className="w-full max-w-4xl h-[80vh]">
+                        <DigitalTwinCreator 
+                            imageSrc={plotImgBase64} 
+                            onClose={() => setIsModalOpen(false)} 
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

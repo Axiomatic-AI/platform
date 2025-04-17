@@ -9,11 +9,10 @@ interface SelectedPlotAreaProps {
     top: number;
     width: number;
     height: number;
-    onReset: () => void;
     selectedImage: string;
 }
 
-export function SelectedPlotArea({ left, top, width, height, onReset, selectedImage }: SelectedPlotAreaProps) {
+export function SelectedPlotArea({ left, top, width, height, selectedImage }: SelectedPlotAreaProps) {
     const { mutate: postPlotPoints, isPending, error } = usePostPlotPoints();
     const [plotData, setPlotData] = useState<PlotPointsResponse | null>(null);
     const [showError, setShowError] = useState(false);
@@ -42,12 +41,6 @@ export function SelectedPlotArea({ left, top, width, height, onReset, selectedIm
 
     return (
         <>
-            <button
-                onClick={onReset}
-                className="absolute top-4 right-4 bg-white/90 dark:bg-gray-800/90 px-3 py-1 rounded-lg shadow-lg hover:bg-white dark:hover:bg-gray-700 transition-colors z-20"
-            >
-                <span className="text-sm text-gray-700 dark:text-gray-300">Reset</span>
-            </button>
             <div 
                 className="absolute"
                 style={{

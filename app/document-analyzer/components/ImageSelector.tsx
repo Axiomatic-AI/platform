@@ -92,9 +92,6 @@ export function ImageSelector({ onSelect, imageSrc }: ImageSelectorProps) {
 
     return (
         <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className="absolute top-4 left-4 bg-white/90 dark:bg-gray-800/90 px-3 py-1 rounded-lg shadow-lg z-20 pointer-events-none">
-                <span className="text-sm text-gray-700 dark:text-gray-300">Drag to select the plot area</span>
-            </div>
             <div 
                 ref={containerRef}
                 className="relative cursor-crosshair w-full h-full"
