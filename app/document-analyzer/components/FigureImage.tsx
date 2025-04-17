@@ -3,6 +3,7 @@ import { PlotPointsResponse } from "../types";
 import { useEffect, useState } from "react";
 import { ImageSelector } from "./ImageSelector";
 import { ExtractedPlotOverlay } from "./ExtractedPlotOverlay";
+import { SelectedPlotArea } from "./SelectedPlotArea";
 
 interface SelectionCoordinates {
     x: number;
@@ -11,52 +12,68 @@ interface SelectionCoordinates {
     height: number;
 }
 
+type Step = 'initial' | 'selecting' | 'selected';
+
 export function FigureImage({ plotImgBase64 }: { plotImgBase64: string, imgId: string }) {
     const { mutateAsync: postPlotPoints, isPending: isPlotting } = usePostPlotPoints()
     const [plotData, setPlotData] = useState<PlotPointsResponse | null>(null)
     const [selectedCoordinates, setSelectedCoordinates] = useState<SelectionCoordinates | null>(null)
+    const [currentStep, setCurrentStep] = useState<Step>('initial')
 
-    const handlePlotPoints = async (imageToAnalyze: string = plotImgBase64, coordinates?: SelectionCoordinates) => {
-        const response = await postPlotPoints({ 
-            plotImgBase64: imageToAnalyze,
-        })
-        coordinates && setSelectedCoordinates(coordinates)
-        setPlotData(response)
+    const handlePlotPoints = async (selectedImageBase64: string, coordinates: SelectionCoordinates) => {
+        console.log('coordinates', coordinates)
+        setSelectedCoordinates(coordinates)
+        setCurrentStep('selected')
     }
 
-    const originRelativeToSelectedCoordinates = selectedCoordinates && plotData?.axesInfo ? {
-        x: selectedCoordinates?.x + plotData?.axesInfo.origin[0],
-        y: plotData?.axesInfo.origin[1] + selectedCoordinates?.y - plotData?.axesInfo.yAxisLen
-    } : null
+    const handleStartSelection = () => {
+        setCurrentStep('selecting')
+    }
 
-    if (plotData && originRelativeToSelectedCoordinates) {
-        return (
-            <span className="flex justify-center my-4 test-123 max-w-full h-auto m-0">
-                <span className="relative m-0">
-                    <img src={plotImgBase64} alt={'Plot'} className="w-auto h-auto m-0" onClick={() => handlePlotPoints()} />
-                    <ExtractedPlotOverlay 
-                        plotData={plotData}
-                        originRelativeToSelectedCoordinates={originRelativeToSelectedCoordinates}
-                    />
-                </span>
-            </span>
-        )
+    const handleReset = () => {
+        setSelectedCoordinates(null)
+        setCurrentStep('initial')
     }
 
     return (
-        <ImageSelector onSelect={(selectedImage, coordinates) => handlePlotPoints(selectedImage, coordinates)}>
-            <span className="relative">
-                <img 
-                    src={plotImgBase64} 
-                    alt={'Plot'} 
-                    className="max-w-full h-auto" 
-                />
-                {isPlotting && (
-                    <span className="absolute inset-0 flex items-center justify-center bg-black/20">
-                        <span className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></span>
-                    </span>
-                )}
+        <div className="relative">
+            <span className="flex justify-center my-4 test-123 max-w-full h-auto m-0">
+                <span className="relative m-0">
+                    {currentStep === 'initial' && (
+                        <div 
+                            className="absolute inset-0 flex items-center justify-center bg-black/20 cursor-pointer"
+                            onClick={handleStartSelection}
+                        >
+                            <div className="bg-white/90 dark:bg-gray-800/90 px-4 py-2 rounded-lg shadow-lg">
+                                <span className="text-primary-500 font-medium">Create digital twin</span>
+                            </div>
+                        </div>
+                    )}
+                    
+                    {currentStep === 'selecting' && (
+                        <ImageSelector 
+                            onSelect={handlePlotPoints}
+                            imageSrc={plotImgBase64}
+                        />
+                    )}
+                    
+                    {currentStep === 'selected' && selectedCoordinates && (
+                        <SelectedPlotArea 
+                            left={selectedCoordinates.x}
+                            top={selectedCoordinates.y}
+                            width={selectedCoordinates.width}
+                            height={selectedCoordinates.height}
+                            onReset={handleReset}
+                        />
+                    )}
+
+                    <img 
+                        src={plotImgBase64} 
+                        alt={'Plot'} 
+                        className="max-w-full h-auto m-0" 
+                    />
+                </span>
             </span>
-        </ImageSelector>
+        </div>
     )
 }

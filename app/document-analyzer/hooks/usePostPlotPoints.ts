@@ -1,6 +1,6 @@
 import { getClient } from "@lib/api";
 import { useMutation } from "@tanstack/react-query";
-import { PlotPointsResponse, Point } from "../types";
+import { PlotPointsResponse, Point, Series } from "../types";
 
 interface PlotPointsRequest {
     plotImgBase64: string;
@@ -12,54 +12,20 @@ interface PlotPointsRequest {
     };
 }
 
-
-type Series = {
-  colour: string;
-  points: ServerPoint[]
-}
-
-type ServerPoint = {
-  value_x: number;
-  value_y: number
-}
-
-function mapPoints(points: any): Point[] {
-  return points.map((point: any) => ({ valueX: point.value_x, valueY: point.value_y }));
+function mapSeries(series: any): Series[] {
+  return series.map(({ id, color, points }: { id: string, color: string[], points: Record<string, any>}) => ({
+    id,
+    color,
+    points: points.map((point: any) => ({ valueX: point.value_x, valueY: point.value_y, percentageCoordX: point.percentage_coord_x, percentageCoordY: point.percentage_coord_y }))
+  }));
 }
 
 function mapServerResponseToPlotPointsResponse(response: any): PlotPointsResponse {
   return {
-    axesInfo: {
-      origin: response.axes_info.origin,
-      xAxisLen: response.axes_info.x_axis_len,
-      xContour: response.axes_info.x_contour,
-      xTickMapping: response.axes_info.x_tick_mapping,
-      xTickMarks: response.axes_info.x_tick_marks,
-      xTickVals: response.axes_info.x_tick_vals,
-      yAxisLen: response.axes_info.y_axis_len,
-      yContour: response.axes_info.y_contour,
-      yTickMapping: response.axes_info.y_tick_mapping,
-      yTickMarks: response.axes_info.y_tick_marks,
-      yTickVals: response.axes_info.y_tick_vals,
-    },
-    extractedPoints: mapPoints(response.extracted_points.extracted_points),
-    plotInfo: {
-      blackGrayLine: response.plot_info.black_gray_line,
-      gridLines: response.plot_info.grid_lines,
-      numOfLines: response.plot_info.num_of_lines,
-      xAxisMax: response.plot_info.x_axis_max,
-      xAxisMin: response.plot_info.x_axis_min,
-      xAxisName: response.plot_info.x_axis_name,
-      xAxisTickVals: response.plot_info.x_axis_tick_vals,
-      xAxisUnit: response.plot_info.x_axis_unit,
-      xScale: response.plot_info.x_scale,
-      yAxisMax: response.plot_info.y_axis_max,
-      yAxisMin: response.plot_info.y_axis_min,
-      yAxisName: response.plot_info.y_axis_name,
-      yAxisTickVals: response.plot_info.y_axis_tick_vals,
-      yAxisUnit: response.plot_info.y_axis_unit,
-      yScale: response.plot_info.y_scale
-    }
+    origin: response.origin,
+    extractedSeries: mapSeries(response.extracted_series),
+    xAxisLen: response.x_axis_len,
+    yAxisLen: response.y_axis_len,
   } as PlotPointsResponse
 }
 

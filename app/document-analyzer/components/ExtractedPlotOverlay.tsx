@@ -1,42 +1,29 @@
 import { PlotPointsResponse } from "../types";
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart } from 'recharts';
 
 interface ExtractedPlotOverlayProps {
     plotData: PlotPointsResponse;
-    originRelativeToSelectedCoordinates: {
-        x: number;
-        y: number;
-    };
+    left: number;
+    top: number;
+    width: number;
+    height: number;
 }
 
-export function ExtractedPlotOverlay({ plotData, originRelativeToSelectedCoordinates }: ExtractedPlotOverlayProps) {
-    console.log(plotData)
+export function ExtractedPlotOverlay({ plotData, top, left, width, height }: ExtractedPlotOverlayProps) {
+    console.log(plotData);
+
     return (
-        <>
+        <span className="flex flex-col space-y-4">
+            {/* Original overlay */}
             <span 
                 className="absolute border-2 border-primary-500/50 bg-primary-500/10"
                 style={{
-                    left: `${originRelativeToSelectedCoordinates.x}px`,
-                    top: `${originRelativeToSelectedCoordinates.y}px`,
-                    width: `${plotData.axesInfo.xAxisLen}px`,
-                    height: `${plotData.axesInfo.yAxisLen}px`,
+                    left: `${left}px`,
+                    top: `${top}px`,
+                    width: `${width}px`,
+                    height: `${height}px`,
                 }}
             />
-            {Object.entries(plotData.extractedPoints).map(([seriesName, points]) => (
-                <span key={seriesName} className="absolute">
-                    {points.map((point, index) => (
-                        point.imgCoordX !== undefined && point.imgCoordY !== undefined && (
-                            <span
-                                key={`${seriesName}-${index}`}
-                                className="absolute w-2 h-2 rounded-full bg-red-500 transform -translate-x-1/2 -translate-y-1/2"
-                                style={{
-                                    left: `${originRelativeToSelectedCoordinates.x + point.imgCoordX}px`,
-                                    top: `${originRelativeToSelectedCoordinates.y + point.imgCoordY}px`,
-                                }}
-                            />
-                        )
-                    ))}
-                </span>
-            ))}
-        </>
+        </span>
     );
 } 
