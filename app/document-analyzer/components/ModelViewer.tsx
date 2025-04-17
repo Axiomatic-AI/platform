@@ -31,11 +31,6 @@ export function ModelViewer({ selectedImage, selectedCoordinates }: ModelViewerP
                     height={selectedCoordinates.height}
                     selectedImage={selectedImage}
                 />
-                <img 
-                    src={selectedImage} 
-                    alt={'Selected Plot Area'} 
-                    className="w-full h-full object-contain" 
-                />
             </div>
         </div>
     );

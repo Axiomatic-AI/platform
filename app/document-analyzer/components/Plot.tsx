@@ -21,7 +21,7 @@ export function Plot({ data }: PlotProps) {
     const { extractedSeries } = data;
 
     return (
-        <div className="relative w-full h-full">
+        <div className="flex">
             {extractedSeries.map((series, seriesIndex) => (
                 series.points.map((point, index) => (
                     <div

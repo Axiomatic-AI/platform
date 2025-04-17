@@ -41,22 +41,25 @@ export function SelectedPlotArea({ left, top, width, height, selectedImage }: Se
 
     return (
         <>
-            <div 
-                className="absolute"
-                style={{
-                    left: `${left}px`,
-                    top: `${top}px`,
-                    width: `${width}px`,
-                    height: `${height}px`,
-                }}
-            >
-                {plotData && <Plot data={plotData} />}
-            </div>
-            {isPending && (
-                <div className="absolute w-full h-full flex justify-center items-center bg-black/10 dark:bg-white/10 z-30">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+            <div className="relative w-full h-full flex items-center justify-center">
+                <div className="relative w-full h-full flex items-center justify-center">
+                    <div className="relative m-0 p-0">
+                        <img 
+                            src={selectedImage} 
+                            alt="Selected Plot Area" 
+                            className="w-full h-full object-contain m-0 p-0" 
+                        />
+                        {plotData && (
+                            <Plot data={plotData} />
+                        )}
+                    </div>
                 </div>
-            )}
+                {isPending && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/10 dark:bg-white/10 z-30">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+                    </div>
+                )}
+            </div>
             {showError && (
                 <Snackbar 
                     message="Failed to extract plot points. Please try again." 
