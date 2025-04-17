@@ -83,7 +83,7 @@ export function Result({ document }: ResultProps) {
             components={components} 
             urlTransform={transformUrl}
             unwrapDisallowed={true}
-            allowedElements={['p', 'img', 'div', 'span']}
+            allowedElements={['p', 'img', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']}
           >
             {parsedMarkdown}
           </ReactMarkdown>
