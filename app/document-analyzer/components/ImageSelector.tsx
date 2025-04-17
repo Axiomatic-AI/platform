@@ -48,32 +48,41 @@ export function ImageSelector({ onSelect, imageSrc }: ImageSelectorProps) {
         // Create a canvas to capture the selected region
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        if (!ctx || !containerRef.current) return;
+        if (!ctx || !containerRef.current || !imageRef.current) return;
 
-        // Create a temporary image element
-        const img = new Image();
-        img.src = imageSrc;
+        // Get the natural dimensions of the image
+        const imgNaturalWidth = imageRef.current.naturalWidth;
+        const imgNaturalHeight = imageRef.current.naturalHeight;
         
-        // Wait for the image to load
-        await new Promise((resolve) => {
-            img.onload = resolve;
-        });
+        // Get the displayed dimensions of the image
+        const displayedWidth = imageRef.current.width;
+        const displayedHeight = imageRef.current.height;
+        
+        // Calculate scaling factors
+        const scaleX = imgNaturalWidth / displayedWidth;
+        const scaleY = imgNaturalHeight / displayedHeight;
 
-        // Set canvas dimensions to match selection
-        canvas.width = Math.abs(selection.width);
-        canvas.height = Math.abs(selection.height);
+        // Calculate the actual coordinates in the natural image space
+        const naturalX = selection.startX * scaleX;
+        const naturalY = selection.startY * scaleY;
+        const selectionWidth = Math.abs(selection.width) * scaleX;
+        const selectionHeight = Math.abs(selection.height) * scaleY;
 
-        // Draw the selected region
+        // Set canvas dimensions to match the natural selection size
+        canvas.width = selectionWidth;
+        canvas.height = selectionHeight;
+
+        // Draw the selected region from the original image
         ctx.drawImage(
-            img,
-            selection.startX,
-            selection.startY,
-            selection.width,
-            selection.height,
+            imageRef.current,
+            naturalX,
+            naturalY,
+            selectionWidth,
+            selectionHeight,
             0,
             0,
-            Math.abs(selection.width),
-            Math.abs(selection.height)
+            selectionWidth,
+            selectionHeight
         );
 
         // Convert to base64
@@ -81,10 +90,10 @@ export function ImageSelector({ onSelect, imageSrc }: ImageSelectorProps) {
         
         // Calculate the final coordinates
         const coordinates: SelectionCoordinates = {
-            x: selection.startX,
-            y: selection.startY,
-            width: Math.abs(selection.width),
-            height: Math.abs(selection.height)
+            x: naturalX,
+            y: naturalY,
+            width: selectionWidth,
+            height: selectionHeight
         };
 
         onSelect(selectedImageBase64, coordinates);
@@ -103,7 +112,7 @@ export function ImageSelector({ onSelect, imageSrc }: ImageSelectorProps) {
                     ref={imageRef}
                     src={imageSrc}
                     alt="Plot"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain p-0 m-0"
                 />
                 {isDragging && (
                     <div 
