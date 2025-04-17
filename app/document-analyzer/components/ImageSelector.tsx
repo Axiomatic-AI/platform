@@ -104,7 +104,6 @@ export function ImageSelector({ onSelect, imageSrc }: ImageSelectorProps) {
                     src={imageSrc}
                     alt="Plot"
                     className="w-full h-full object-contain"
-                    style={{ display: 'none' }}
                 />
                 {isDragging && (
                     <div 

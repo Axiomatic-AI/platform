@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ImageSelector } from "./ImageSelector";
-import { SelectedPlotArea } from "./SelectedPlotArea";
+import { ModelViewer } from "./ModelViewer";
 
 interface SelectionCoordinates {
     x: number;
@@ -70,30 +70,19 @@ export function DigitalTwinCreator({ imageSrc, onClose }: DigitalTwinCreatorProp
 
             {/* Main Content Area */}
             <div className="flex-1 relative overflow-hidden p-6">
-                <div className="relative w-full h-full flex items-center justify-center bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
-                    {currentStep === 'selecting' && (
+                {currentStep === 'selecting' ? (
+                    <div className="relative w-full h-full flex items-center justify-center bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
                         <ImageSelector 
                             onSelect={handlePlotPoints}
                             imageSrc={imageSrc}
                         />
-                    )}
-                    
-                    {currentStep === 'selected' && selectedCoordinates && selectedImage && (
-                        <SelectedPlotArea 
-                            left={selectedCoordinates.x}
-                            top={selectedCoordinates.y}
-                            width={selectedCoordinates.width}
-                            height={selectedCoordinates.height}
-                            selectedImage={selectedImage}
-                        />
-                    )}
-
-                    <img 
-                        src={imageSrc} 
-                        alt={'Plot'} 
-                        className="max-w-full max-h-full object-contain" 
+                    </div>
+                ) : selectedCoordinates && selectedImage && (
+                    <ModelViewer 
+                        selectedImage={selectedImage}
+                        selectedCoordinates={selectedCoordinates}
                     />
-                </div>
+                )}
             </div>
         </div>
     )
