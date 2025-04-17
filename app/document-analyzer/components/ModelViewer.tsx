@@ -52,7 +52,7 @@ export function ModelViewer({ selectedImage, selectedCoordinates }: ModelViewerP
     return (
         <div className="flex h-full space-x-6">
             {/* Side Panel */}
-            <div className="w-80 flex-shrink-0 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+            <div className="w-80 flex-shrink-0 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 px-4 py-3">
                 <ModelViewerSidePanel 
                     plotData={plotData}
                     isPending={isPending}
