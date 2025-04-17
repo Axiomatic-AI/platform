@@ -42,8 +42,6 @@ export function ImageSelector({ onSelect, imageSrc }: ImageSelectorProps) {
     };
 
     const handleMouseUp = async () => {
-        console.log('handleMouseUp')
-        console.log('isDragging', isDragging)
         if (!isDragging) return;
         setIsDragging(false);
 
@@ -89,7 +87,6 @@ export function ImageSelector({ onSelect, imageSrc }: ImageSelectorProps) {
             height: Math.abs(selection.height)
         };
 
-        console.log('coordinates', coordinates)
         onSelect(selectedImageBase64, coordinates);
     };
 

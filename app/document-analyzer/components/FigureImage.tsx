@@ -15,13 +15,12 @@ interface SelectionCoordinates {
 type Step = 'initial' | 'selecting' | 'selected';
 
 export function FigureImage({ plotImgBase64 }: { plotImgBase64: string, imgId: string }) {
-    const { mutateAsync: postPlotPoints, isPending: isPlotting } = usePostPlotPoints()
-    const [plotData, setPlotData] = useState<PlotPointsResponse | null>(null)
+    const [selectedImage, setSelectedImage] = useState<string | null>(null)
     const [selectedCoordinates, setSelectedCoordinates] = useState<SelectionCoordinates | null>(null)
     const [currentStep, setCurrentStep] = useState<Step>('initial')
 
     const handlePlotPoints = async (selectedImageBase64: string, coordinates: SelectionCoordinates) => {
-        console.log('coordinates', coordinates)
+        setSelectedImage(selectedImageBase64)
         setSelectedCoordinates(coordinates)
         setCurrentStep('selected')
     }
@@ -57,13 +56,14 @@ export function FigureImage({ plotImgBase64 }: { plotImgBase64: string, imgId: s
                         />
                     )}
                     
-                    {currentStep === 'selected' && selectedCoordinates && (
+                    {currentStep === 'selected' && selectedCoordinates && selectedImage && (
                         <SelectedPlotArea 
                             left={selectedCoordinates.x}
                             top={selectedCoordinates.y}
                             width={selectedCoordinates.width}
                             height={selectedCoordinates.height}
                             onReset={handleReset}
+                            selectedImage={selectedImage}
                         />
                     )}
 

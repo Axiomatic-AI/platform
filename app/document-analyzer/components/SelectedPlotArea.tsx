@@ -1,12 +1,37 @@
+import { usePostPlotPoints } from '../hooks/usePostPlotPoints';
+import { useEffect, useState } from 'react';
+import { PlotPointsResponse } from '../types';
+import { Plot } from './Plot';
+
 interface SelectedPlotAreaProps {
     left: number;
     top: number;
     width: number;
     height: number;
     onReset: () => void;
+    selectedImage: string;
 }
 
-export function SelectedPlotArea({ left, top, width, height, onReset }: SelectedPlotAreaProps) {
+export function SelectedPlotArea({ left, top, width, height, onReset, selectedImage }: SelectedPlotAreaProps) {
+    const { mutate: postPlotPoints, isPending } = usePostPlotPoints();
+    const [plotData, setPlotData] = useState<PlotPointsResponse | null>(null);
+
+    useEffect(() => {
+        postPlotPoints({
+            plotImgBase64: selectedImage,
+            coordinates: {
+                x: left,
+                y: top,
+                width,
+                height
+            }
+        }, {
+            onSuccess: (data) => {
+                setPlotData(data);
+            }
+        });
+    }, [selectedImage, left, top, width, height, postPlotPoints]);
+
     return (
         <>
             <button
@@ -23,7 +48,14 @@ export function SelectedPlotArea({ left, top, width, height, onReset }: Selected
                     width: `${width}px`,
                     height: `${height}px`,
                 }}
-            />
+            >
+                {plotData && <Plot data={plotData} />}
+            </div>
+            {isPending && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 dark:bg-white/20 z-30">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white dark:border-gray-800"></div>
+                </div>
+            )}
         </>
     );
 } 
