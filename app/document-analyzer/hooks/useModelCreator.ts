@@ -20,7 +20,7 @@ interface UseModelCreatorProps {
 
 interface UseModelCreatorReturn {
     // State
-    selectedImage: string | null;
+    selectedImagePart: string | null;
     selectedCoordinates: SelectionCoordinates | null;
     currentStep: Step;
     plotData: PlotPointsResponse | null;
@@ -40,7 +40,7 @@ interface UseModelCreatorReturn {
 }
 
 export function useModelCreator({ documentId, imageId }: UseModelCreatorProps): UseModelCreatorReturn {
-    const [selectedImage, setSelectedImage] = useState<string | null>(null)
+    const [selectedImagePart, setSelectedImagePart] = useState<string | null>(null)
     const [selectedCoordinates, setSelectedCoordinates] = useState<SelectionCoordinates | null>(null)
     const [currentStep, setCurrentStep] = useState<Step>('selecting')
     const [plotData, setPlotData] = useState<PlotPointsResponse | null>(null)
@@ -53,16 +53,16 @@ export function useModelCreator({ documentId, imageId }: UseModelCreatorProps): 
 
     useEffect(() => {
         if (savedModel) {
-            setSelectedImage(savedModel.selectedImage);
+            setSelectedImagePart(savedModel.selectedImage);
             setPlotData({ extractedSeries: savedModel.plotData.series } as PlotPointsResponse);
             setCurrentStep('selected');
         }
     }, [savedModel]);
 
     useEffect(() => {
-        if (selectedImage && selectedCoordinates) {
+        if (selectedImagePart && selectedCoordinates) {
             postPlotPoints({
-                plotImgBase64: selectedImage,
+                plotImgBase64: selectedImagePart,
                 coordinates: {
                     x: selectedCoordinates.x,
                     y: selectedCoordinates.y,
@@ -77,10 +77,10 @@ export function useModelCreator({ documentId, imageId }: UseModelCreatorProps): 
                 }
             });
         }
-    }, [selectedImage, selectedCoordinates, postPlotPoints]);
+    }, [selectedImagePart, selectedCoordinates, postPlotPoints]);
 
     const handlePlotPoints = async (selectedImageBase64: string, coordinates: SelectionCoordinates) => {
-        setSelectedImage(selectedImageBase64)
+        setSelectedImagePart(selectedImageBase64)
         setSelectedCoordinates(coordinates)
         setCurrentStep('selected')
     }
@@ -93,12 +93,12 @@ export function useModelCreator({ documentId, imageId }: UseModelCreatorProps): 
     }
 
     const handleSave = async () => {
-        if (!selectedImage || !plotData?.extractedSeries.length) return
+        if (!selectedImagePart || !plotData?.extractedSeries.length) return
         
         saveModel({
             documentId,
             imageId,
-            selectedImage,
+            selectedImage: selectedImagePart,
             plotData: { series: plotData.extractedSeries }
         });
     }
@@ -107,7 +107,7 @@ export function useModelCreator({ documentId, imageId }: UseModelCreatorProps): 
 
     return {
         // State
-        selectedImage,
+        selectedImagePart,
         selectedCoordinates,
         currentStep,
         plotData,

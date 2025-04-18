@@ -12,7 +12,7 @@ interface ModelCreatorProps {
 
 export function ModelCreator({ imageSrc, documentId, imageId, onClose }: ModelCreatorProps) {
     const {
-        selectedImage,
+        selectedImagePart,
         selectedCoordinates,
         currentStep,
         isSaving,
@@ -100,9 +100,9 @@ export function ModelCreator({ imageSrc, documentId, imageId, onClose }: ModelCr
                             imageSrc={imageSrc}
                         />
                     </div>
-                ) : selectedCoordinates && selectedImage && (
+                ) : selectedCoordinates && selectedImagePart && (
                     <ModelViewer 
-                        selectedImage={selectedImage}
+                        selectedImagePart={selectedImagePart}
                         series={selectedSeries}
                         plotData={plotData}
                         isPending={isPending}

@@ -10,7 +10,7 @@ interface SelectionCoordinates {
 }
 
 interface ModelViewerProps {
-    selectedImage: string;
+    selectedImagePart: string;
     series: Series[];
     plotData: PlotPointsResponse | null;
     isPending: boolean;
@@ -19,7 +19,7 @@ interface ModelViewerProps {
 }
 
 export function ModelViewer({ 
-    selectedImage, 
+    selectedImagePart, 
     series,
     plotData,
     isPending,
@@ -41,7 +41,7 @@ export function ModelViewer({
             {/* Image Area */}
             <div className="flex-1 relative bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <SelectedPlotArea 
-                    selectedImage={selectedImage}
+                    selectedImagePart={selectedImagePart}
                     series={series}
                     isPending={isPending}
                 />
