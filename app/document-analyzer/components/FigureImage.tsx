@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { InitialStep } from "./InitialStep";
-import { DigitalTwinCreator } from "./DigitalTwinCreator";
+import { ModelCreator } from "./ModelCreator";
 
-export function FigureImage({ plotImgBase64 }: { plotImgBase64: string, imgId: string }) {
+interface FigureImageProps {
+    plotImgBase64: string;
+    imgId: string;
+    documentId: string;
+}
+
+export function FigureImage({ plotImgBase64, imgId, documentId }: FigureImageProps) {
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     const handleStartSelection = () => {
@@ -25,8 +31,10 @@ export function FigureImage({ plotImgBase64 }: { plotImgBase64: string, imgId: s
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
                     <div className="w-full max-w-4xl h-[80vh]">
-                        <DigitalTwinCreator 
+                        <ModelCreator 
                             imageSrc={plotImgBase64} 
+                            documentId={documentId}
+                            imageId={imgId}
                             onClose={() => setIsModalOpen(false)} 
                         />
                     </div>

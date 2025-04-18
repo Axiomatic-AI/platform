@@ -3,6 +3,7 @@
 import { prisma } from '@lib/prisma'
 import { auth0 } from '@lib/auth0'
 import { compressImages, decompressImages } from './utils/compress-images'
+import { PlotData } from './types'
 
 export async function createDocument({
   title,
@@ -98,5 +99,84 @@ export async function deleteAllDocuments() {
       throw new Error(`Failed to delete all documents: ${error.message}`)
     }
     throw new Error('Failed to delete all documents: Unknown error')
+  }
+}
+
+export async function saveModel({
+  documentId,
+  imageId,
+  selectedImage,
+  plotData,
+}: {
+  documentId: string
+  imageId: string
+  selectedImage: string
+  plotData: PlotData
+}) {
+  try {
+    const session = await auth0.getSession()
+    if (!session?.user?.sub) throw new Error('Unauthorized')
+
+    // Compress the selected image
+    const compressedSelectedImage = await compressImages({ image: selectedImage })
+
+    return await prisma.model.create({
+      data: {
+        documentId,
+        imageId,
+        selectedImage: compressedSelectedImage.image,
+        plotData: JSON.stringify(plotData),
+      },
+    })
+  } catch (error) {
+    console.error('Error saving model:', error)
+    if (error instanceof Error) {
+      throw new Error(`Failed to save model: ${error.message}`)
+    }
+    throw new Error('Failed to save model: Unknown error')
+  }
+}
+
+export async function getModel(documentId: string, imageId: string) {
+  try {
+    const session = await auth0.getSession()
+    if (!session?.user?.sub) throw new Error('Unauthorized')
+
+    const model = await prisma.model.findFirst({
+      where: {
+        documentId,
+        imageId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    if (!model) return null
+
+    // Decompress the selected image
+    const decompressedSelectedImage = await decompressImages({ image: model.selectedImage })
+
+    // Safely handle plotData
+    let parsedPlotData = null
+    if (model.plotData && typeof model.plotData === 'string') {
+      try {
+        parsedPlotData = JSON.parse(model.plotData)
+      } catch (error) {
+        console.error('Error parsing plotData:', error)
+      }
+    }
+
+    return {
+      ...model,
+      selectedImage: decompressedSelectedImage.image,
+      plotData: parsedPlotData,
+    }
+  } catch (error) {
+    console.error('Error getting model:', error)
+    if (error instanceof Error) {
+      throw new Error(`Failed to get model: ${error.message}`)
+    }
+    throw new Error('Failed to get model: Unknown error')
   }
 } 

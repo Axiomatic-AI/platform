@@ -17,3 +17,7 @@ export interface PlotPointsResponse {
   xAxisLen: number,
   yAxisLen: number,
 }
+
+export interface PlotData {
+    series: Series[];
+}
