@@ -25,7 +25,7 @@ interface UseModelCreatorReturn {
     currentStep: Step;
     plotData: PlotPointsResponse | null;
     selectedSeriesIds: string[];
-    showError: boolean;
+    errorMessage: string | null;
     isPending: boolean;
     isSaving: boolean;
     isLoading: boolean;
@@ -35,7 +35,7 @@ interface UseModelCreatorReturn {
     handlePlotPoints: (selectedImageBase64: string, coordinates: SelectionCoordinates) => void;
     handleReset: () => void;
     handleSave: () => Promise<void>;
-    setShowError: (show: boolean) => void;
+    setErrorMessage: (message: string | null) => void;
     setSelectedSeriesIds: (ids: string[]) => void;
 }
 
@@ -45,7 +45,7 @@ export function useModelCreator({ documentId, imageId }: UseModelCreatorProps): 
     const [currentStep, setCurrentStep] = useState<Step>('selecting')
     const [plotData, setPlotData] = useState<PlotPointsResponse | null>(null)
     const [selectedSeriesIds, setSelectedSeriesIds] = useState<string[]>([])
-    const [showError, setShowError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     const { mutate: postPlotPoints, isPending } = usePostPlotPoints();
     const { mutate: saveModel, isPending: isSaving } = useSaveModel();
@@ -112,7 +112,7 @@ export function useModelCreator({ documentId, imageId }: UseModelCreatorProps): 
         currentStep,
         plotData,
         selectedSeriesIds,
-        showError,
+        errorMessage,
         isPending,
         isSaving,
         isLoading,
@@ -122,7 +122,7 @@ export function useModelCreator({ documentId, imageId }: UseModelCreatorProps): 
         handlePlotPoints,
         handleReset,
         handleSave,
-        setShowError,
+        setErrorMessage,
         setSelectedSeriesIds
     }
 } 

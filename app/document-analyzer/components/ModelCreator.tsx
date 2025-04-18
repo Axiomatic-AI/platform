@@ -18,14 +18,14 @@ export function ModelCreator({ imageSrc, documentId, imageId, onClose }: ModelCr
         isSaving,
         plotData,
         selectedSeriesIds,
-        showError,
+        errorMessage,
         isPending,
         selectedSeries,
         
         handlePlotPoints,
         handleReset,
         handleSave,
-        setShowError,
+        setErrorMessage,
         setSelectedSeriesIds
     } = useModelCreator({ documentId, imageId });
 
@@ -111,10 +111,10 @@ export function ModelCreator({ imageSrc, documentId, imageId, onClose }: ModelCr
                     />
                 )}
             </div>
-            {showError && (
+            {errorMessage && (
                 <Snackbar 
-                    message="Failed to extract plot points. Please try again." 
-                    onClose={() => setShowError(false)}
+                    message={errorMessage}
+                    onClose={() => setErrorMessage(null)}
                     level="error"
                 />
             )}
