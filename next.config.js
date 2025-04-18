@@ -27,6 +27,7 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '500mb',
     },
+    proxyTimeout: 600000,
   },
 };
 

@@ -1,27 +1,30 @@
 "use client"
 
 import React, { useState, useCallback } from 'react'
-import { usePostParseDocument } from './hooks/usePostParseDocument'
-import { FileUpload } from './components/FileUpload'
-import { Loading } from '../../components/Loading'
-import { HistorySidebar } from './components/HistorySidebar'
-import { useGetDocuments } from './hooks/useGetDocuments'
-import { useDeleteAllDocuments } from './hooks/useDeleteAllDocuments'
+import { usePostParseDocument } from '../hooks/usePostParseDocument'
+import { FileUpload } from '../components/FileUpload'
+import { Loading } from '../../../components/Loading'
+import { Result } from '../components/Result'
+import { HistorySidebar } from '../components/HistorySidebar'
+import { useGetDocuments } from '../hooks/useGetDocuments'
+import { useGetDocument } from '../hooks/useGetDocument'
+import { PlusIcon } from '@heroicons/react/24/outline'
+import { useDeleteAllDocuments } from '../hooks/useDeleteAllDocuments'
 import { useRouter } from 'next/navigation'
-
-// TODO refactor: this is terrible GPT code. We have almost identical code in the [id] page.
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
-export default function DocumentAnalyzerPage() {
+export default function DocumentAnalyzerPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const [isDragging, setIsDragging] = useState(false)
   const [file, setFile] = useState<File | null>(null)
+  const unwrappedParams = React.use(params)
+  const { data: currentDocument, isLoading: isLoadingDocument } = useGetDocument(unwrappedParams.id);
   const { data: documents, isLoading: isLoadingDocuments } = useGetDocuments()
   const { mutateAsync: postParseDocument, isPending: isParsing, error } = usePostParseDocument()
   const { mutateAsync: deleteAllDocuments, isPending: isDeleting } = useDeleteAllDocuments()
 
-  const isLoading = isParsing
+  const isLoading = isLoadingDocument || isParsing
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -53,7 +56,8 @@ export default function DocumentAnalyzerPage() {
 
   const handleDeleteAll = useCallback(async () => {
     await deleteAllDocuments()
-  }, [deleteAllDocuments])
+    router.push('/document-analyzer')
+  }, [deleteAllDocuments, router])
 
   const handleFileSelect = useCallback((selectedFile: File) => {
     if (selectedFile.type !== 'application/pdf') {
@@ -83,7 +87,7 @@ export default function DocumentAnalyzerPage() {
       <div className="flex-0 flex flex-col">
         <HistorySidebar
           documents={documents ?? []}
-          currentDocumentId={null}
+          currentDocumentId={unwrappedParams.id}
           onDocumentSelect={handleDocumentSelect}
           isLoading={isLoadingDocuments}
           onDeleteAll={handleDeleteAll}
@@ -95,7 +99,7 @@ export default function DocumentAnalyzerPage() {
           <div className="h-full max-w-5xl mx-auto"><Loading /></div> 
         )}
 
-        {!isLoading && (
+        {!currentDocument && !isLoading && (
           <FileUpload
             file={file}
             isDragging={isDragging}
@@ -107,6 +111,23 @@ export default function DocumentAnalyzerPage() {
             isLoading={isLoading}
             handleAnalyze={handleAnalyze}
           />
+        )}
+
+        {currentDocument && !isLoading && (
+          <>
+            <Result document={currentDocument} />
+            <div className="fixed right-4 bottom-4 z-10">
+              <button
+                className="bg-primary-500 text-white p-3 rounded-full shadow-lg hover:bg-primary-600 transition-colors duration-200 flex items-center justify-center group relative"
+                onClick={() => router.push('/document-analyzer')}
+              >
+                <PlusIcon className="h-6 w-6" />
+                <span className="absolute right-full mr-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  New document
+                </span>
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>

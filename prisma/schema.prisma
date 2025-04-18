@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,35 +7,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ThreadType {
-  PIC
-  document
-}
-
 model Thread {
-  id          String     @id @default(cuid())
-  userId      String    
-  title       String
-  type        ThreadType
-  queries     Json[]     @default([])
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id        String     @id @default(cuid())
+  userId    String
+  title     String
+  queries   Json[]     @default([])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  type      ThreadType
 
   @@index([userId])
   @@index([createdAt])
 }
 
 model Document {
-  id                  String   @id @default(cuid())
-  userId              String
-  title               String
-  markdown            String
-  images              Json     @default("{}")
-  interlineEquations  String[] @default([])
-  inlineEquations     String[] @default([])
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  userId             String
+  title              String
+  markdown           String
+  interlineEquations String[] @default([])
+  inlineEquations    String[] @default([])
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  images             Json     @default("{}")
+  models             Model[]
 
   @@index([userId])
   @@index([createdAt])
+}
+
+model Model {
+  id            String   @id @default(cuid())
+  documentId    String
+  imageId       String
+  selectedImage String
+  plotData      Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  document      Document @relation(fields: [documentId], references: [id])
+
+  @@index([documentId])
+  @@index([createdAt])
+}
+
+enum ThreadType {
+  PIC
+  document
 }

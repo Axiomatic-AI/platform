@@ -3,6 +3,8 @@ import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import { Document } from '@prisma/client';
+import { FigureImage } from './FigureImage';
+import { v4 as uuidv4 } from 'uuid';
 interface ResultProps {
   document: Document;
 }
@@ -40,16 +42,30 @@ export function Result({ document }: ResultProps) {
 
 
   const components: Components = {
+    p: ({ children }) => {
+      // Check if any child has a data: URL src
+      const hasFigureImage = React.Children.toArray(children).some(
+        child => {
+          if (!React.isValidElement(child)) return false;
+          const props = child.props as { src?: string };
+          return props.src?.startsWith('data:') ?? false;
+        }
+      );
+      
+      if (hasFigureImage) {
+        return <>{children}</>;
+      }
+      
+      return <p>{children}</p>;
+    },
     img: ({ src, alt, ...props }) => {
       if (src?.startsWith('data:')) {
         return (
-          <span className="flex justify-center my-4 test-123">
-            <img src={src} alt={alt || ''} className="max-w-full h-auto" {...props} />
-          </span>
+          <FigureImage plotImgBase64={src} imgId={alt || uuidv4()} documentId={document.id} />
         );
       }
       return (
-        <span className="flex justify-center my-4 test-123">
+        <span className="flex justify-center my-4">
           <img src={src} alt={alt || ''} className="max-w-full h-auto" {...props} />
         </span>
       );
@@ -63,8 +79,13 @@ export function Result({ document }: ResultProps) {
     <MathJaxContext config={mathjaxConfig}>
       <div className="prose dark:prose-invert p-6 max-w-7xl mx-auto">
         <MathJax dynamic hideUntilTypeset="every">
-          <ReactMarkdown components={components} urlTransform={transformUrl}>
-              {parsedMarkdown}
+          <ReactMarkdown 
+            components={components} 
+            urlTransform={transformUrl}
+            unwrapDisallowed={true}
+            allowedElements={['p', 'img', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']}
+          >
+            {parsedMarkdown}
           </ReactMarkdown>
         </MathJax>
       </div>
