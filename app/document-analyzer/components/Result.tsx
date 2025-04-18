@@ -61,7 +61,7 @@ export function Result({ document }: ResultProps) {
     img: ({ src, alt, ...props }) => {
       if (src?.startsWith('data:')) {
         return (
-          <FigureImage plotImgBase64={src} imgId={alt || uuidv4()} />
+          <FigureImage plotImgBase64={src} imgId={alt || uuidv4()} documentId={document.id} />
         );
       }
       return (

@@ -11,7 +11,6 @@ interface SelectionCoordinates {
 
 interface ModelViewerProps {
     selectedImage: string;
-    selectedCoordinates: SelectionCoordinates;
     series: Series[];
     plotData: PlotPointsResponse | null;
     isPending: boolean;
@@ -21,7 +20,6 @@ interface ModelViewerProps {
 
 export function ModelViewer({ 
     selectedImage, 
-    selectedCoordinates, 
     series,
     plotData,
     isPending,

@@ -9,6 +9,8 @@ import { useGetDocuments } from './hooks/useGetDocuments'
 import { useDeleteAllDocuments } from './hooks/useDeleteAllDocuments'
 import { useRouter } from 'next/navigation'
 
+// TODO refactor: this is terrible GPT code. We have almost identical code in the [id] page.
+
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
 export default function DocumentAnalyzerPage() {

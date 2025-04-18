@@ -103,7 +103,6 @@ export function ModelCreator({ imageSrc, documentId, imageId, onClose }: ModelCr
                 ) : selectedCoordinates && selectedImage && (
                     <ModelViewer 
                         selectedImage={selectedImage}
-                        selectedCoordinates={selectedCoordinates}
                         series={selectedSeries}
                         plotData={plotData}
                         isPending={isPending}
