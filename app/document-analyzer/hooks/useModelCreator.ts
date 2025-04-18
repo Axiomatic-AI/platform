@@ -100,6 +100,11 @@ export function useModelCreator({ documentId, imageId }: UseModelCreatorProps): 
             imageId,
             selectedImage: selectedImagePart,
             plotData: { series: plotData.extractedSeries }
+        }, {
+            onError: (error) => {
+                console.error(error)
+                setErrorMessage("Failed to save model. Please try again.")
+            }
         });
     }
 
