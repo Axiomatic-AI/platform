@@ -93,7 +93,10 @@ export function useModelCreator({ documentId, imageId }: UseModelCreatorProps): 
     }
 
     const handleSave = async () => {
-        if (!selectedImagePart || !plotData?.extractedSeries.length) return
+        if (!selectedImagePart || !plotData?.extractedSeries.length) {
+            setErrorMessage("Please select a plot area and plot points before saving.")
+            return
+        }
         
         saveModel({
             documentId,
